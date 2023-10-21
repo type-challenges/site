@@ -1,0 +1,72 @@
+.container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-bg-1);
+  .icon {
+    padding: 0 12px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    > svg {
+      width: 24px;
+      height: 24px;
+    }
+    &:hover {
+      background-color: var(--color-neutral-2);
+    }
+  }
+}
+
+.drawer-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  .drawer-header-text {
+    min-width: fit-content;
+    margin-right: 32px;
+  }
+  .drawer-header-search {
+    width: 200px;
+    height: 32px;
+  }
+}
+
+.drawer-problem-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  > svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.modal-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .modal-setting-item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
+    .modal-setting-item-select {
+      width: 128px;
+    }
+  }
+}

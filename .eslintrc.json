@@ -1,0 +1,125 @@
+{
+  "env": {
+    "amd": true,
+    "node": true,
+    "browser": true
+  },
+  "plugins": [
+    "react",
+    "import",
+    "compat",
+    "eslint-comments",
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:import/recommended",
+    "plugin:compat/recommended",
+    "plugin:prettier/recommended",
+    "plugin:eslint-comments/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "alias": {
+        "map": [
+          [
+            "@config",
+            "./config"
+          ],
+          [
+            "@src",
+            "./src"
+          ],
+          [
+            "@exercises",
+            "./exercises"
+          ]
+        ]
+      },
+      "typescript": {}
+    }
+  },
+  "rules": {
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": [
+          "^dist/*",
+          "^output/*"
+        ]
+      }
+    ],
+    "import/no-named-as-default-member": "off",
+    "import/no-named-as-default": "off",
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "ignore"
+      }
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "no-trailing-spaces": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "varsIgnorePattern": "^[_]*$"
+      }
+    ],
+    "max-len": ["error", { "code": 100 }],
+    "object-curly-spacing": ["error", "always"],
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 80,
+        "tabWidth": 2,
+        "useTabs": false,
+        "semi": true,
+        "singleQuote": true,
+        "trailingComma": "all",
+        "bracketSpacing": true,
+        "jsxBracketSameLine": false,
+        "arrowParens": "avoid"
+      }
+    ],
+    "react/jsx-indent": ["error", 2],
+    "react/jsx-indent-props": ["error", 2],
+    "react/jsx-tag-spacing": "error",
+    "indent": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "import/default": "off",
+    "import/namespace": "off",
+    "react/prop-types": "off",
+    "react/display-name": "off"
+  }
+}

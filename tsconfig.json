@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "lib": ["DOM", "ES6"],
+    "outDir": "dist",
+    "module": "ES2020",
+    "typeRoots": ["./node_modules/@types", "./src/types/**/*.d.ts"],
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "esModuleInterop": true,
+    "downlevelIteration": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "stripInternal": true,
+    "resolveJsonModule": true,
+    "allowArbitraryExtensions": true,
+    "paths": {
+      "@config/*": [
+        "./config/*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "src"
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
+}
