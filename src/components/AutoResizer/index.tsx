@@ -1,3 +1,4 @@
+// https://github.com/typescript-exercises/typescript-exercises/blob/main/src/components/auto-resizer/index.tsx
 import debounce from 'lodash.debounce';
 import React, { useEffect, useRef, useState } from 'react';
 

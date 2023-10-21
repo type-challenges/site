@@ -1,3 +1,4 @@
+// https://github.com/typescript-exercises/typescript-exercises/blob/main/src/components/monaco-editor/revalidate-model.ts
 import { editor, languages, MarkerSeverity } from 'monaco-editor';
 import { DiagnosticMessageChain } from 'typescript';
 

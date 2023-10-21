@@ -1,3 +1,4 @@
+// https://github.com/typescript-exercises/typescript-exercises/blob/main/src/components/monaco-editor/index.tsx
 import debounce from 'lodash.debounce';
 import { editor, languages, Uri } from 'monaco-editor';
 import React from 'react';
