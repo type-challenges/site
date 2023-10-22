@@ -105,6 +105,6 @@
   },
   "record_tip": {
     "en": "In order to save memory, we only save the latest 8 records. You can choose to manually delete some useless data to break this limit.",
-    "zh-cn": "为了节省内存，我们仅保存最新的 8 条记录，您可以选择手动删除一些数据来突破这个限制"
+    "zh-cn": "为了节省内存，我们仅保存最新的 8 条记录，您可以在达到限制后手动删除一些数据"
   }
 }

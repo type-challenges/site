@@ -30,7 +30,7 @@ export function flattenDiagnosticMessageText(
   return result;
 }
 
-export async function revalidateModel(model: editor.IModel) {
+export async function validateMonacoModel(model?: editor.IModel) {
   if (!model || model.isDisposed()) return;
   const getWorker = await languages.typescript.getTypeScriptWorker();
   const worker = await getWorker(model.uri);

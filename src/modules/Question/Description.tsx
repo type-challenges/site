@@ -42,7 +42,7 @@ const Description = function () {
     [currentProblem, state],
   );
 
-  const updateDescription = useCallback(
+  const updateData = useCallback(
     debounce(async function (problem: Problem) {
       const desc = await getProblemDocs(problem, ProblemDocs.description);
       setDesc(desc);
@@ -54,7 +54,7 @@ const Description = function () {
   useEffect(
     function () {
       setLoading(true);
-      updateDescription(currentProblem);
+      updateData(currentProblem);
     },
     [currentProblem],
   );

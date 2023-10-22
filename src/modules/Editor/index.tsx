@@ -20,7 +20,7 @@ function Editor() {
   const [{ setting, currentProblem }] = useContext(Context);
 
   function onChange(filename: ProblemFiles, content: string) {
-    if (!raw) return;
+    if (!raw || filename !== ProblemFiles.template) return;
     localCache.setProblemCache(currentProblem.key, {
       lastUpdated: content,
     });

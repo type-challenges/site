@@ -25,6 +25,7 @@ export type Problem = {
 const filePrefixes = ['check', 'template'] as const;
 
 export enum ProblemFiles {
+  test = 'test.ts',
   check = 'check.ts',
   template = 'template.ts',
 }
@@ -35,12 +36,18 @@ export enum ProblemDocs {
 }
 
 export type ProblemRaw = Record<
-  ProblemFiles | `node_modules/type-assertions/index.${'d.ts' | 'js'}`,
+  | Exclude<ProblemFiles, ProblemFiles.test>
+  | `node_modules/type-assertions/index.${'d.ts' | 'js'}`,
   {
     content: string;
     readOnly?: boolean;
   }
 >;
+
+export enum ProblemTestReplaceVal {
+  source = 'TEST_SOURCE_STRING',
+  target = 'TEST_TARGET_STRING',
+}
 
 export const NULL_CASE: NonNullable<Problem['cases']>[number] = {
   source: 'null',
@@ -117,7 +124,7 @@ export async function getProblemRaw(
           }
         }
         const url = problemsUrl[subjectKey][key][prefix];
-        return axios.get(url).then(function ({ data }: { data: string }) {
+        return axios.get<string>(url).then(function ({ data }) {
           if (ProblemFiles.template.includes(prefix)) {
             const { tabSize } = localCache.getSettingCache();
             if (tabSize === 4) {
@@ -145,10 +152,26 @@ export async function getProblemDocs(
   const { subjectKey, key } = problem;
   try {
     const url = problemsUrl[subjectKey][key][type][language];
-    const { data } = await axios.get(url);
+    const { data } = await axios.get<string>(url);
     return data;
   } catch {
     /* empty */
   }
   return '';
+}
+
+export async function getProblemTestRaw(problem: Problem) {
+  const { subjectKey, key } = problem;
+  try {
+    const testFileUrl = problemsUrl[subjectKey][key]['test'];
+    if (testFileUrl === undefined) {
+      const checkFileUrl = problemsUrl[subjectKey][key]['check'];
+      const { data } = await axios.get<string>(checkFileUrl);
+      return data.replace(/\n\/\/ @ts-ignore/g, '').trim();
+    }
+    const { data } = await axios.get<string>(testFileUrl);
+    return data.replace(/\n\/\/ @ts-ignore/g, '').trim();
+  } catch (e) {
+    /* empty */
+  }
 }
