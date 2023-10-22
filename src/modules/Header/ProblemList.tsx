@@ -6,13 +6,15 @@ import { Problem } from '@src/utils/problems';
 import localCache from '@src/utils/local-cache';
 import emitter from '@src/utils/emit';
 import SubmitStatus from '@src/components/SubmitStatus';
+import i18nJson from '@config/i18n.json';
 import styles from './index.module.less';
 
 const ProblemList = function () {
   const [state, setState] = useState(false);
   const [visible, setVisible] = useState(false);
   const [searchKey, setSearchKey] = useState('');
-  const [{ problems, currentProblem }, setContext] = useContext(Context);
+  const [{ problems, currentProblem, setting }, setContext] =
+    useContext(Context);
 
   const problemsTree = useMemo(
     function () {
@@ -79,11 +81,13 @@ const ProblemList = function () {
         placement={'left'}
         title={
           <div className={styles['drawer-header']}>
-            <div className={styles['drawer-header-text']}>Problem List</div>
+            <div className={styles['drawer-header-text']}>
+              {i18nJson['problem_list'][setting.language]}
+            </div>
             <Input.Search
               className={styles['drawer-header-search']}
               value={searchKey}
-              placeholder={'Type to search...'}
+              placeholder={i18nJson['type_to_search'][setting.language]}
               onChange={key => setSearchKey(key.toLowerCase())}
             />
           </div>

@@ -8,6 +8,7 @@ import localCache, { PROBLEM_STATUS } from '@src/utils/local-cache';
 import emitter from '@src/utils/emit';
 import Context from '@src/utils/context';
 import { NULL_CASE, Problem } from '@src/utils/problems';
+import i18nJson from '@config/i18n.json';
 import styles from './index.module.less';
 
 const enum MainTab {
@@ -16,7 +17,7 @@ const enum MainTab {
 }
 
 const Results = function () {
-  const [{ currentProblem }] = useContext(Context);
+  const [{ currentProblem, setting }] = useContext(Context);
   const [loading, setLoading] = useState(true);
   const [activeMainTab, setActiveMainTab] = useState<string>(MainTab.cases);
   const [status, setStatus] = useState<string[] | 'Accept!'>([]);
@@ -79,11 +80,17 @@ const Results = function () {
           onChange={setActiveMainTab}
           className={styles['main-tabs']}
         >
-          <CustomTabs.TabPane key={MainTab.cases} title={'Cases'}>
+          <CustomTabs.TabPane
+            key={MainTab.cases}
+            title={i18nJson[MainTab.cases][setting.language]}
+          >
             <CustomTabs className={styles['case-tabs']}>
               {cases.map(function ({ source, target }, index) {
                 return (
-                  <CustomTabs.TabPane key={index} title={`Case ${index + 1}`}>
+                  <CustomTabs.TabPane
+                    key={index}
+                    title={`${i18nJson['case'][setting.language]} ${index + 1}`}
+                  >
                     <div className={styles['case-header']}>Source</div>
                     <Input.TextArea
                       value={source}
@@ -103,10 +110,13 @@ const Results = function () {
               })}
             </CustomTabs>
           </CustomTabs.TabPane>
-          <CustomTabs.TabPane key={MainTab.result} title={'Result'}>
+          <CustomTabs.TabPane
+            key={MainTab.result}
+            title={i18nJson[MainTab.result][setting.language]}
+          >
             {Array.isArray(status) && status.length === 0 && (
               <div className={styles['result-empty']}>
-                Please run or submit your code first
+                {i18nJson['please_run_or_submit_first'][setting.language]}
               </div>
             )}
             {typeof status === 'string' && (
@@ -132,7 +142,7 @@ const Results = function () {
         </CustomTabs>
         <div className={styles.footer}>
           <Button type={'primary'} className={styles.btn}>
-            Run
+            {i18nJson['run_code'][setting.language]}
           </Button>
           <Button
             type={'primary'}
@@ -140,7 +150,7 @@ const Results = function () {
             onClick={onSubmit}
             className={styles.btn}
           >
-            Submit
+            {i18nJson['submit_code'][setting.language]}
           </Button>
         </div>
       </div>

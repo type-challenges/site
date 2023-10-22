@@ -10,6 +10,7 @@ import {
   ProblemFiles,
 } from '@src/utils/problems';
 import localCache from '@src/utils/local-cache';
+import i18nJson from '@config/i18n.json';
 import MonacoEditor from './monaco-editor';
 import styles from './index.module.less';
 
@@ -67,7 +68,9 @@ function Editor() {
     <div className={styles.container}>
       <div className={styles.header}>
         <IconCode />
-        <span style={{ marginLeft: 5 }}>Code</span>
+        <span style={{ marginLeft: 5 }}>
+          {i18nJson['code'][setting.language]}
+        </span>
         <a onClick={resetCode} className={styles.reset}>
           <IconUndo />
         </a>

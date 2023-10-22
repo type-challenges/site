@@ -13,13 +13,14 @@ import {
 import localCache from '@src/utils/local-cache';
 import SubmitStatus from '@src/components/SubmitStatus';
 import emitter from '@src/utils/emit';
+import i18nJson from '@config/i18n.json';
 import styles from './index.module.less';
 
 const Description = function () {
   const [
     {
       currentProblem,
-      setting: { theme },
+      setting: { theme, language },
     },
   ] = useContext(Context);
   const {
@@ -86,7 +87,7 @@ const Description = function () {
               return (
                 <div key={index} className={styles['desc-case']}>
                   <div className={styles['desc-case-title']}>
-                    Case {index + 1}:
+                    {`${i18nJson['case'][language]} ${index + 1}:`}
                   </div>
                   <div className={styles['desc-case-content']}>
                     <div className={styles['desc-case-content-inner']}>
