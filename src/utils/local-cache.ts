@@ -26,6 +26,13 @@ export type ProblemsCacheJson = {
 
 const RECORD_MAX_LENGTH = 8;
 
+const DEFAULT_SETTING: Setting = {
+  theme: 'light',
+  fontSize: 14,
+  tabSize: 2,
+  language: 'en',
+};
+
 const localCache = {
   __PROBLEM_CACHE_KEY__: '__problem_cache__',
   __SETTING_CACHE_KEY__: '__setting_cache__',
@@ -105,10 +112,7 @@ const localCache = {
   },
   getSettingCache(): Setting {
     let json: Setting = {
-      theme: 'light',
-      fontSize: 14,
-      tabSize: 2,
-      language: 'en',
+      ...DEFAULT_SETTING,
     };
     const cache = localStorage.getItem(localCache.__SETTING_CACHE_KEY__);
     if (!cache) {
@@ -119,7 +123,7 @@ const localCache = {
     } catch {
       /* empty */
     }
-    return json;
+    return { ...DEFAULT_SETTING, ...json };
   },
   setSettingCache: debounce(function (setting: Setting) {
     localStorage.setItem(

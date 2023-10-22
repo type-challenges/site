@@ -28,6 +28,6 @@ jobs:
       - name: Compressed size
         uses: preactjs/compressed-size-action@v2
         with:
-          pattern: dist
+          pattern: dist/**/*
           compression: none
           build-script: build
