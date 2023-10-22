@@ -10,7 +10,7 @@ import {
 } from '@src/utils/problems';
 import { Setting } from '@src/utils/setting';
 import emitter from '@src/utils/emit';
-import { revalidateModel } from './revalidate-model';
+import { validateMonacoModel } from '@src/utils/validate-monaco-model';
 
 self.MonacoEnvironment = {
   getWorker: function () {
@@ -49,7 +49,7 @@ export interface MonacoEditorProps {
   height?: number | string;
   namespace?: string;
   raw: ProblemRaw;
-  selectedFilename: ProblemFiles;
+  selectedFilename: Exclude<ProblemFiles, ProblemFiles.test>;
   onChange?: (filename: ProblemFiles, content: string) => void;
   setting: Setting;
 }
@@ -149,7 +149,7 @@ const MonacoEditor = decorateWithAutoResize(
       for (const filename of Object.keys(this.props.raw)) {
         this.models[filename].updateOptions(this.props.setting);
         if (!filename.includes('node_modules')) {
-          revalidateModel(this.models[filename]);
+          validateMonacoModel(this.models[filename]);
         }
       }
     }

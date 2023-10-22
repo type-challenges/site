@@ -7,13 +7,28 @@ import { CustomTabs } from '@src/components/CustomTabs';
 import localCache, { PROBLEM_STATUS } from '@src/utils/local-cache';
 import emitter from '@src/utils/emit';
 import Context from '@src/utils/context';
-import { NULL_CASE, Problem } from '@src/utils/problems';
+import {
+  getProblemTestRaw,
+  NULL_CASE,
+  Problem,
+  ProblemFiles,
+  ProblemTestReplaceVal,
+} from '@src/utils/problems';
 import i18nJson from '@config/i18n.json';
+import { validateMonacoModel } from '@src/utils/validate-monaco-model';
 import styles from './index.module.less';
 
 const enum MainTab {
   cases = 'cases',
   result = 'result',
+}
+
+function formatErrorFromMarkers(markers: editor.IMarker[]) {
+  return markers.map(function (maker) {
+    return `${maker.resource.path}:${maker.startLineNumber}:${
+      maker.startColumn
+    }: error: ${maker.code ? `TS${maker.code}: ` : ''}${maker.message}`;
+  });
 }
 
 const Results = function () {
@@ -24,14 +39,95 @@ const Results = function () {
   const { key, cases: originCases = [] } = currentProblem;
   const noCases = useMemo(() => originCases.length === 0, [originCases]);
   const [cases, setCases] = useState(noCases ? [NULL_CASE] : originCases);
+  const [testRaw, setTestRaw] = useState<string | undefined>(undefined);
+  const [model, setModel] = useState<editor.ITextModel | undefined>(undefined);
+  const [casesErrors, setCasesErrors] = useState<string[][]>([]);
 
-  function onSubmit() {
-    const markers = editor.getModelMarkers({});
-    const errors = markers.map(function (maker) {
-      return `${maker.resource.path}:${maker.startLineNumber}:${
-        maker.startColumn
-      }: error: ${maker.code ? `TS${maker.code}: ` : ''}${maker.message}`;
+  const updateData = useCallback(
+    debounce(async function (problem: Problem) {
+      const raw = await getProblemTestRaw(problem);
+      setTestRaw(raw);
+      setStatus([]);
+      setCasesErrors([]);
+      setCases(problem.cases || [NULL_CASE]);
+      setActiveMainTab(MainTab.cases);
+      setLoading(false);
+    }, 500),
+    [],
+  );
+
+  useEffect(
+    function () {
+      setLoading(true);
+      updateData(currentProblem);
+    },
+    [currentProblem],
+  );
+
+  useEffect(
+    function () {
+      if (testRaw === undefined) {
+        setModel(undefined);
+      } else {
+        const uri = Uri.file(`${currentProblem.key}/${ProblemFiles.test}`);
+        const m =
+          editor.getModel(uri) || editor.createModel(testRaw, undefined, uri);
+        setModel(m);
+      }
+      return function () {
+        model?.dispose();
+      };
+    },
+    [testRaw],
+  );
+
+  async function run() {
+    setLoading(true);
+    setActiveMainTab(MainTab.result);
+    setStatus([]);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const templateUri = Uri.file(
+      `${currentProblem.key}/${ProblemFiles.template}`,
+    );
+    const markers = editor.getModelMarkers({
+      resource: templateUri,
     });
+    const errors = formatErrorFromMarkers(markers);
+    if (errors.length > 0) {
+      setStatus(errors);
+    } else {
+      const e = [];
+      if (model && testRaw) {
+        for (const { source, target } of cases) {
+          const content = testRaw
+            .replace(ProblemTestReplaceVal.source, source)
+            .replace(ProblemTestReplaceVal.target, target);
+          model.setValue(content);
+          await validateMonacoModel(model);
+          const markers = editor.getModelMarkers({
+            resource: Uri.file(`${currentProblem.key}/${ProblemFiles.test}`),
+          });
+          const errors = formatErrorFromMarkers(markers);
+          e.push(errors);
+        }
+        setCasesErrors(e);
+      }
+    }
+    setLoading(false);
+  }
+
+  async function onSubmit() {
+    setLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const markers = [
+      ...editor.getModelMarkers({
+        resource: Uri.file(`${currentProblem.key}/${ProblemFiles.template}`),
+      }),
+      ...editor.getModelMarkers({
+        resource: Uri.file(`${currentProblem.key}/${ProblemFiles.check}`),
+      }),
+    ];
+    const errors = formatErrorFromMarkers(markers);
     setStatus(errors.length > 0 ? errors : 'Accept!');
     const status =
       errors.length > 0 ? PROBLEM_STATUS.unAccepted : PROBLEM_STATUS.accepted;
@@ -48,23 +144,71 @@ const Results = function () {
     });
     emitter.emit('submit-code');
     setActiveMainTab(MainTab.result);
+    setLoading(false);
   }
 
-  const updateCases = useCallback(
-    debounce(function (cases: Problem['cases']) {
-      setCases(cases || [NULL_CASE]);
-      setLoading(false);
-    }, 500),
-    [],
-  );
-
-  useEffect(
+  const resultContent = useMemo(
     function () {
-      setLoading(true);
-      setStatus([]);
-      updateCases(currentProblem.cases);
+      if (typeof status === 'string') {
+        return <div className={styles['result-accept']}>Accepted!</div>;
+      } else if (Array.isArray(status) && status.length > 0) {
+        return (
+          <div className={styles['result-errors']}>
+            <div className={styles['result-error-title']}>
+              Compilation Error
+            </div>
+            <div className={styles['result-error-info']}>
+              {status.map(function (error) {
+                return (
+                  <div key={error} className={styles['result-error-item']}>
+                    {error}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      } else if (casesErrors.length > 0) {
+        return (
+          <CustomTabs className={styles['case-tabs']}>
+            {cases.map(function (_, index) {
+              const result = casesErrors[index];
+              return (
+                <CustomTabs.TabPane
+                  key={index}
+                  title={`${i18nJson['case'][setting.language]} ${index + 1}`}
+                >
+                  {result.length > 0 && (
+                    <div className={styles['result-error-info']}>
+                      {result.map(function (error) {
+                        return (
+                          <div
+                            key={error}
+                            className={styles['result-error-item']}
+                          >
+                            {error}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {result.length === 0 && (
+                    <div className={styles['result-pass']}>Pass!</div>
+                  )}
+                </CustomTabs.TabPane>
+              );
+            })}
+          </CustomTabs>
+        );
+      } else {
+        return (
+          <div className={styles['result-empty']}>
+            {i18nJson['please_run_or_submit_first'][setting.language]}
+          </div>
+        );
+      }
     },
-    [currentProblem],
+    [cases, casesErrors, status],
   );
 
   return (
@@ -114,34 +258,11 @@ const Results = function () {
             key={MainTab.result}
             title={i18nJson[MainTab.result][setting.language]}
           >
-            {Array.isArray(status) && status.length === 0 && (
-              <div className={styles['result-empty']}>
-                {i18nJson['please_run_or_submit_first'][setting.language]}
-              </div>
-            )}
-            {typeof status === 'string' && (
-              <div className={styles['result-accept']}>{'Accepted!'}</div>
-            )}
-            {Array.isArray(status) && status.length > 0 && (
-              <div className={styles['result-errors']}>
-                <div className={styles['result-error-title']}>
-                  Compilation Error
-                </div>
-                <div className={styles['result-error-info']}>
-                  {status.map(function (error) {
-                    return (
-                      <div key={error} className={styles['result-error-item']}>
-                        {error}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            {resultContent}
           </CustomTabs.TabPane>
         </CustomTabs>
         <div className={styles.footer}>
-          <Button type={'primary'} className={styles.btn}>
+          <Button type={'primary'} className={styles.btn} onClick={run}>
             {i18nJson['run_code'][setting.language]}
           </Button>
           <Button

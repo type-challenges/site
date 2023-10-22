@@ -1,7 +1,7 @@
 declare module '@src/problems' {
   import type { ProblemDocs } from '@src/utils/problems';
   import type { Setting } from '@src/utils/setting';
-  declare type FilePrefixes = ['check', 'template'];
+  declare type FilePrefixes = ['check', 'template', 'test'];
   const problemsUrl: {
     [subjectKey: string]: {
       [key: string]: {

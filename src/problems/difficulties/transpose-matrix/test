@@ -1,0 +1,3 @@
+import { TransposeMatrix } from './template';
+
+export const _: TransposeMatrix<TEST_SOURCE_STRING> = TEST_TARGET_STRING;
