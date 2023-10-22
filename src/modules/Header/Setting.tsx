@@ -4,6 +4,7 @@ import { useContext, useState } from 'react';
 import Context from '@src/utils/context';
 import localCache from '@src/utils/local-cache';
 import settingList, { Setting } from '@src/utils/setting';
+import i18nJson from '@config/i18n.json';
 import styles from './index.module.less';
 
 const SettingComponent = function () {
@@ -20,7 +21,7 @@ const SettingComponent = function () {
         title={
           <div className={styles['modal-header']}>
             <IconSettings />
-            <div>Setting</div>
+            <div>{i18nJson['setting'][settingCache.language]}</div>
           </div>
         }
         footer={null}
@@ -31,18 +32,18 @@ const SettingComponent = function () {
           {(Object.keys(settingList) as (keyof Setting)[]).map(
             function (setting) {
               const defaultValue = settingCache[setting];
-              const { name, options, onChange } = settingList[setting];
+              const { languageKey, options, onChange } = settingList[setting];
               return (
                 <div key={setting} className={styles['modal-setting-item']}>
                   <div className={styles['modal-setting-item-text']}>
-                    {name}
+                    {i18nJson[languageKey][settingCache.language]}
                   </div>
                   <div className={styles['modal-setting-item-option']}>
                     <Select
                       className={styles['modal-setting-item-select']}
                       defaultValue={defaultValue}
                       onChange={function (value: Setting[keyof Setting]) {
-                        // Type Error
+                        // TODO: Type Error
                         onChange?.(
                           value as unknown as never,
                           // @ts-ignore

@@ -108,6 +108,7 @@ const localCache = {
       theme: 'light',
       fontSize: 14,
       tabSize: 2,
+      language: 'en',
     };
     const cache = localStorage.getItem(localCache.__SETTING_CACHE_KEY__);
     if (!cache) {

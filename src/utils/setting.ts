@@ -4,11 +4,12 @@ export type Setting = {
   theme: 'light' | 'dark';
   fontSize: number;
   tabSize: 2 | 4;
+  language: 'en' | 'zh-cn';
 };
 
 const settingList: {
   [setting in keyof Setting]: {
-    name: string;
+    languageKey: 'theme' | 'font_size' | 'tab_size' | 'language';
     options: {
       text: string;
       value: Setting[setting];
@@ -17,7 +18,7 @@ const settingList: {
   };
 } = {
   theme: {
-    name: 'theme',
+    languageKey: 'theme',
     options: [
       {
         text: 'light',
@@ -37,7 +38,7 @@ const settingList: {
     },
   },
   fontSize: {
-    name: 'font size',
+    languageKey: 'font_size',
     options: new Array(7).fill(0).map(function (_, index) {
       const size = index + 12;
       return {
@@ -47,7 +48,7 @@ const settingList: {
     }),
   },
   tabSize: {
-    name: 'tab size',
+    languageKey: 'tab_size',
     options: [
       {
         text: '2',
@@ -61,6 +62,19 @@ const settingList: {
     onChange(next, prev) {
       emitter.emit('tabSizeChange', prev, next);
     },
+  },
+  language: {
+    languageKey: 'language',
+    options: [
+      {
+        text: 'English',
+        value: 'en',
+      },
+      {
+        text: '简体中文',
+        value: 'zh-cn',
+      },
+    ],
   },
 };
 

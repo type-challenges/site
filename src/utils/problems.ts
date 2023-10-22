@@ -140,7 +140,7 @@ export async function getProblemRaw(
 export async function getProblemDocs(
   problem: Problem,
   type: ProblemDocs,
-  language: 'en' = 'en',
+  language: Setting['language'] = 'en',
 ) {
   const { subjectKey, key } = problem;
   try {

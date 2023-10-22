@@ -1,0 +1,110 @@
+{
+  "code": {
+    "en": "Code",
+    "zh-cn": "代码"
+  },
+  "problem_list": {
+    "en": "Problem List",
+    "zh-cn": "题目列表"
+  },
+  "type_to_search": {
+    "en": "Type to search...",
+    "zh-cn": "请输入关键词搜索"
+  },
+  "setting": {
+    "en": "setting",
+    "zh-cn": "设置"
+  },
+  "case": {
+    "en": "Case",
+    "zh-cn": "示例"
+  },
+  "no_data": {
+    "en": "No data",
+    "zh-cn": "暂无数据"
+  },
+  "please_run_or_submit_first": {
+    "en": "Please run or submit your code first",
+    "zh-cn": "请先运行或提交您的代码"
+  },
+  "run_code": {
+    "en": "Run",
+    "zh-cn": "运行示例"
+  },
+  "submit_code": {
+    "en": "submit",
+    "zh-cn": "提交"
+  },
+  "description": {
+    "en": "Description",
+    "zh-cn": "题目描述"
+  },
+  "records": {
+    "en": "Records",
+    "zh-cn": "提交记录"
+  },
+  "tutorial": {
+    "en": "tutorial",
+    "zh-cn": "题解"
+  },
+  "theme": {
+    "en": "theme",
+    "zh-cn": "主题"
+  },
+  "font_size": {
+    "en": "font size",
+    "zh-cn": "字体大小"
+  },
+  "tab_size": {
+    "en": "tab size",
+    "zh-cn": "缩进大小"
+  },
+  "language": {
+    "en": "language",
+    "zh-cn": "语言"
+  },
+  "cases": {
+    "en": "Cases",
+    "zh-cn": "测试用例"
+  },
+  "result": {
+    "en": "Result",
+    "zh-cn": "运行结果"
+  },
+  "status": {
+    "en": "Status",
+    "zh-cn": "状态"
+  },
+  "time": {
+    "en": "Time",
+    "zh-cn": "提交时间"
+  },
+  "options": {
+    "en": "Options",
+    "zh-cn": "选项"
+  },
+  "operate": {
+    "en": "Operate",
+    "zh-cn": "操作"
+  },
+  "view": {
+    "en": "view",
+    "zh-cn": "查看"
+  },
+  "copy": {
+    "en": "copy",
+    "zh-cn": "复制"
+  },
+  "successfully_delete": {
+    "en": "Successfully deleted",
+    "zh-cn": "删除成功"
+  },
+  "failed_delete": {
+    "en": "Failed to delete, please refresh page to retry",
+    "zh-cn": "删除失败，请刷新重试"
+  },
+  "record_tip": {
+    "en": "In order to save memory, we only save the latest 8 records. You can choose to manually delete some useless data to break this limit.",
+    "zh-cn": "为了节省内存，我们仅保存最新的 8 条记录，您可以选择手动删除一些数据来突破这个限制"
+  }
+}

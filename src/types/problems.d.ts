@@ -1,5 +1,6 @@
 declare module '@src/problems' {
   import type { ProblemDocs } from '@src/utils/problems';
+  import type { Setting } from '@src/utils/setting';
   declare type FilePrefixes = ['check', 'template'];
   const problemsUrl: {
     [subjectKey: string]: {
@@ -7,7 +8,7 @@ declare module '@src/problems' {
         [file in FilePrefixes[number]]: string;
       } & {
         [key in ProblemDocs]: {
-          en: string;
+          [key in Setting['language']]: string;
         };
       };
     };
