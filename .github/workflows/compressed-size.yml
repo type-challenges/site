@@ -3,9 +3,9 @@ name: Compressed Size Compare
 on:
   pull_request:
     paths:
-      - config
-      - html
-      - src
+      - config/**
+      - html/**
+      - src/**
       - rspack.config.ts
       - tsconfig.json
       - package.json
