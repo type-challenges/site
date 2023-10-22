@@ -2,4 +2,6 @@
 
 Reference https://github.com/typescript-exercises/typescript-exercises.
 
-[MIT license](./README.md)
+Demo address: https://zly201.github.io/typescript-tutorial-exercises
+
+[MIT license](./LICENSE)
