@@ -14,9 +14,9 @@ name: "CodeQL"
 on:
   pull_request:
     paths:
-      - config
-      - html
-      - src
+      - config/**
+      - html/**
+      - src/**
       - rspack.config.ts
     branches:
       - main
