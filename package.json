@@ -11,8 +11,8 @@
     "reset": "rm -rf node_modules",
     "setup": "yarn reset && yarn",
     "clean": "rm -rf dist",
-    "dev": "rspack serve --watch",
-    "build": "yarn clean && rspack build",
+    "dev": "rspack serve --watch --env development",
+    "build": "yarn clean && rspack build --env production",
     "lint": "eslint --fix --color --cache --quiet .",
     "prepare": "husky install"
   },
