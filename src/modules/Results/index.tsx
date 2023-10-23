@@ -1,4 +1,4 @@
-import { editor, Uri } from 'monaco-editor';
+import type { editor } from 'monaco-editor';
 import dayjs from 'dayjs';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Button, Input, Skeleton } from '@arco-design/web-react';
@@ -15,7 +15,7 @@ import {
   ProblemTestReplaceVal,
 } from '@src/utils/problems';
 import i18nJson from '@config/i18n.json';
-import { validateMonacoModel } from '@src/utils/validate-monaco-model';
+import { monacoInstance, validateMonacoModel } from '@src/utils/monaco';
 import styles from './index.module.less';
 
 const enum MainTab {
@@ -40,7 +40,6 @@ const Results = function () {
   const noCases = useMemo(() => originCases.length === 0, [originCases]);
   const [cases, setCases] = useState(noCases ? [NULL_CASE] : originCases);
   const [testRaw, setTestRaw] = useState<string | undefined>(undefined);
-  const [model, setModel] = useState<editor.ITextModel | undefined>(undefined);
   const [casesErrors, setCasesErrors] = useState<string[][]>([]);
 
   const updateData = useCallback(
@@ -64,74 +63,72 @@ const Results = function () {
     [currentProblem],
   );
 
-  useEffect(
-    function () {
-      if (testRaw === undefined) {
-        setModel(undefined);
-      } else {
-        const uri = Uri.file(`${currentProblem.key}/${ProblemFiles.test}`);
-        const m =
-          editor.getModel(uri) || editor.createModel(testRaw, undefined, uri);
-        setModel(m);
-      }
-      return function () {
-        model?.dispose();
-      };
-    },
-    [testRaw],
-  );
-
   async function run() {
+    if (!monacoInstance || !testRaw) return;
     setLoading(true);
     setActiveMainTab(MainTab.result);
     setStatus([]);
     await new Promise(resolve => setTimeout(resolve, 500));
-    const templateUri = Uri.file(
+    const templateUri = monacoInstance.Uri.file(
       `${currentProblem.key}/${ProblemFiles.template}`,
     );
-    const markers = editor.getModelMarkers({
+    const markers = monacoInstance.editor.getModelMarkers({
       resource: templateUri,
     });
     const errors = formatErrorFromMarkers(markers);
     if (errors.length > 0) {
       setStatus(errors);
-    } else {
+    } else if (testRaw) {
       const e = [];
-      if (model && testRaw) {
-        for (const { source, target } of cases) {
-          const content = testRaw
-            .replace(ProblemTestReplaceVal.source, source)
-            .replace(ProblemTestReplaceVal.target, target);
-          model.setValue(content);
-          await validateMonacoModel(model);
-          const markers = editor.getModelMarkers({
-            resource: Uri.file(`${currentProblem.key}/${ProblemFiles.test}`),
-          });
-          const errors = formatErrorFromMarkers(markers);
-          e.push(errors);
-        }
-        setCasesErrors(e);
+      const uri = monacoInstance.Uri.file(
+        `${currentProblem.key}/${ProblemFiles.test}`,
+      );
+      const model =
+        monacoInstance.editor.getModel(uri) ||
+        monacoInstance.editor.createModel(testRaw, undefined, uri);
+      for (const { source, target } of cases) {
+        const content = testRaw
+          .replace(ProblemTestReplaceVal.source, source)
+          .replace(ProblemTestReplaceVal.target, target);
+        model.setValue(content);
+        await validateMonacoModel(model);
+        const markers = monacoInstance.editor.getModelMarkers({
+          resource: monacoInstance.Uri.file(
+            `${currentProblem.key}/${ProblemFiles.test}`,
+          ),
+        });
+        const errors = formatErrorFromMarkers(markers);
+        e.push(errors);
       }
+      model.dispose();
+      setCasesErrors(e);
     }
     setLoading(false);
   }
 
   async function onSubmit() {
+    if (!monacoInstance) return;
     setLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500));
     const markers = [
-      ...editor.getModelMarkers({
-        resource: Uri.file(`${currentProblem.key}/${ProblemFiles.template}`),
+      ...monacoInstance.editor.getModelMarkers({
+        resource: monacoInstance.Uri.file(
+          `${currentProblem.key}/${ProblemFiles.template}`,
+        ),
       }),
-      ...editor.getModelMarkers({
-        resource: Uri.file(`${currentProblem.key}/${ProblemFiles.check}`),
+      ...monacoInstance.editor.getModelMarkers({
+        resource: monacoInstance.Uri.file(
+          `${currentProblem.key}/${ProblemFiles.check}`,
+        ),
       }),
     ];
     const errors = formatErrorFromMarkers(markers);
     setStatus(errors.length > 0 ? errors : 'Accept!');
     const status =
       errors.length > 0 ? PROBLEM_STATUS.unAccepted : PROBLEM_STATUS.accepted;
-    const code = editor.getModel(Uri.file(`${key}/template.ts`))!.getValue();
+    const code = monacoInstance.editor
+      .getModel(monacoInstance.Uri.file(`${key}/template.ts`))!
+      .getValue();
     localCache.setProblemCache(key, {
       records: [
         {
