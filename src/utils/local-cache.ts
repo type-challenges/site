@@ -15,7 +15,7 @@ export type ProblemRecord = {
 export type ProblemCache = {
   records?: ProblemRecord[];
   status?: PROBLEM_STATUS;
-  lastUpdated?: string;
+  lastUpdated?: string | null;
 };
 
 export type ProblemsCacheJson = {
@@ -78,7 +78,8 @@ const localCache = {
       } else if (status === PROBLEM_STATUS.accepted) {
         newStatus = status;
       }
-      const newLastUpdated = lastUpdated ?? oldLastUpdated ?? '';
+      const newLastUpdated =
+        lastUpdated === null ? undefined : lastUpdated ?? oldLastUpdated ?? '';
       newCache = {
         records: newRecords,
         status: newStatus,

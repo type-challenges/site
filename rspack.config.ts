@@ -77,16 +77,9 @@ module.exports = {
       maxAsyncRequests: 30,
       maxInitialRequests: 30,
       cacheGroups: {
-        monaco: {
-          chunks: 'async',
-          test: /[\\/]node_modules[\\/]monaco-editor/,
-          priority: 1000,
-          name: 'monaco',
-          reuseExistingChunk: true,
-        },
         common: {
           chunks: 'all',
-          test: /[\\/]node_modules[\\/](react|react-dom|@arco-design[\\/]web-react)/,
+          test: /[\\/]node_modules[\\/](react|react-dom|@arco-design[\\/]web-react|@monaco-editor\/react)/,
           priority: 100,
           name: 'common',
           reuseExistingChunk: true,

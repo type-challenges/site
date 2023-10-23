@@ -1,7 +1,9 @@
 // https://github.com/typescript-exercises/typescript-exercises/blob/main/src/components/monaco-editor/index.tsx
 import debounce from 'lodash.debounce';
-import { editor, languages, Uri } from 'monaco-editor';
 import React from 'react';
+import { Editor, Monaco } from '@monaco-editor/react';
+import type { editor } from 'monaco-editor';
+import { Skeleton } from '@arco-design/web-react';
 import { decorateWithAutoResize } from '@src/components/AutoResizer';
 import {
   formatCodeByUpdateTabSize,
@@ -10,39 +12,8 @@ import {
 } from '@src/utils/problems';
 import { Setting } from '@src/utils/setting';
 import emitter from '@src/utils/emit';
-import { validateMonacoModel } from '@src/utils/validate-monaco-model';
-
-self.MonacoEnvironment = {
-  getWorker: function () {
-    return new Worker(
-      new URL(
-        'monaco-editor/esm/vs/language/typescript/ts.worker',
-        import.meta.url,
-      ),
-    );
-  },
-};
-
-languages.typescript.typescriptDefaults.setCompilerOptions({
-  strict: true,
-  target: languages.typescript.ScriptTarget.ES2018,
-  moduleResolution: languages.typescript.ModuleResolutionKind.NodeJs,
-  typeRoots: ['declarations'],
-});
-
-editor.defineTheme('light', {
-  base: 'vs',
-  colors: {},
-  inherit: true,
-  rules: [],
-});
-
-editor.defineTheme('dark', {
-  base: 'vs-dark',
-  colors: {},
-  inherit: true,
-  rules: [],
-});
+import { assignMonacoInstance, validateMonacoModel } from '@src/utils/monaco';
+import styles from './index.module.less';
 
 export interface MonacoEditorProps {
   width?: number | string;
@@ -61,7 +32,6 @@ interface Models {
 const MonacoEditor = decorateWithAutoResize(
   class extends React.Component<MonacoEditorProps> {
     protected instance: editor.IStandaloneCodeEditor | null = null;
-    protected instanceDiv: HTMLElement | null = null;
     protected models: Models = {};
     protected viewStates: { [filename: string]: editor.ICodeEditorViewState } =
       {};
@@ -70,13 +40,33 @@ const MonacoEditor = decorateWithAutoResize(
       const model = this.models[ProblemFiles.template];
       model.setValue(formatCodeByUpdateTabSize(model.getValue(), prev, next));
     };
-    componentDidMount() {
+    beforeMount = (monaco: Monaco) => {
+      assignMonacoInstance(monaco);
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        strict: true,
+        target: monaco.languages.typescript.ScriptTarget.ES2018,
+        moduleResolution:
+          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        typeRoots: ['declarations'],
+      });
+      monaco.editor.defineTheme('light', {
+        base: 'vs',
+        colors: {},
+        inherit: true,
+        rules: [],
+      });
+      monaco.editor.defineTheme('dark', {
+        base: 'vs-dark',
+        colors: {},
+        inherit: true,
+        rules: [],
+      });
       for (const [filename, { content }] of Object.entries(this.props.raw)) {
         this.lastUpdates[filename] = content;
-        const model = editor.createModel(
+        const model = monaco.editor.createModel(
           content,
           undefined,
-          Uri.file(`${this.props.namespace}/${filename}`),
+          monaco.Uri.file(`${this.props.namespace}/${filename}`),
         );
         model.onDidChangeContent(
           debounce(() => {
@@ -87,21 +77,11 @@ const MonacoEditor = decorateWithAutoResize(
         );
         this.models[filename] = model;
       }
-      this.instance = editor.create(this.instanceDiv!, {
-        ...this.props.setting,
-        model: this.models[this.props.selectedFilename],
-        readOnly: Boolean(this.props.raw[this.props.selectedFilename].readOnly),
-        renderValidationDecorations: 'on',
-        minimap: {
-          enabled: false,
-        },
-        autoIndent: 'advanced',
-        formatOnPaste: true,
-        formatOnType: true,
-      });
-      this.instance.layout();
+    };
+    onMount = (instance: editor.IStandaloneCodeEditor) => {
+      this.instance = instance;
       emitter.on('tabSizeChange', this.updateTabSize);
-    }
+    };
     componentWillUnmount() {
       emitter.off('tabSizeChange', this.updateTabSize);
       for (const filename of Object.keys(this.models)) {
@@ -110,6 +90,9 @@ const MonacoEditor = decorateWithAutoResize(
       if (this.instance) {
         this.instance.dispose();
       }
+      this.models = {};
+      this.viewStates = {};
+      this.lastUpdates = {};
       this.instance = null;
     }
     componentDidUpdate(prevProps: Readonly<MonacoEditorProps>): void {
@@ -155,9 +138,29 @@ const MonacoEditor = decorateWithAutoResize(
     }
     render() {
       return (
-        <div
-          style={{ width: this.props.width, height: this.props.height }}
-          ref={(newRef: HTMLElement | null) => (this.instanceDiv = newRef)}
+        <Editor
+          width={this.props.width}
+          height={this.props.height}
+          defaultPath={`${this.props.namespace}/${this.props.selectedFilename}`}
+          loading={
+            <Skeleton
+              className={styles.skeleton}
+              text={{ rows: 3 }}
+              animation={true}
+            />
+          }
+          beforeMount={this.beforeMount}
+          onMount={this.onMount}
+          options={{
+            ...this.props.setting,
+            renderValidationDecorations: 'on',
+            minimap: {
+              enabled: false,
+            },
+            autoIndent: 'advanced',
+            formatOnPaste: true,
+            formatOnType: true,
+          }}
         />
       );
     }

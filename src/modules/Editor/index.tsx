@@ -34,8 +34,8 @@ function Editor() {
   }
 
   const updateRaw = useCallback(
-    debounce(async function (problem: Problem, needDefault = false) {
-      const raw = await getProblemRaw(problem, needDefault);
+    debounce(async function (problem: Problem) {
+      const raw = await getProblemRaw(problem);
       setRaw(raw);
       setLoading(false);
     }, 500),
@@ -50,7 +50,10 @@ function Editor() {
       cancelText: 'cancel',
       onOk: async function () {
         setLoading(true);
-        await updateRaw(currentProblem, true);
+        localCache.setProblemCache(currentProblem.key, {
+          lastUpdated: null,
+        });
+        await updateRaw(currentProblem);
         modal.close();
       },
     });

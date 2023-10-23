@@ -103,19 +103,16 @@ export function formatCodeByUpdateTabSize(
     .join('\n');
 }
 
-export async function getProblemRaw(
-  problem: Problem,
-  needDefault = false,
-): Promise<ProblemRaw> {
+export async function getProblemRaw(problem: Problem): Promise<ProblemRaw> {
   const raw: ProblemRaw = { ...DEFAULT_RAW };
   const { subjectKey, key } = problem;
   try {
     await Promise.all(
       filePrefixes.map(function (prefix) {
-        if (ProblemFiles.template.includes(prefix) && !needDefault) {
+        if (ProblemFiles.template.includes(prefix)) {
           const problemsCacheJson = localCache.getProblemCacheJson();
           const cache = problemsCacheJson[problem.key];
-          if (cache?.lastUpdated) {
+          if (typeof cache?.lastUpdated === 'string') {
             raw[ProblemFiles[prefix]] = {
               ...raw[ProblemFiles[prefix]],
               content: cache.lastUpdated,

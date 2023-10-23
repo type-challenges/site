@@ -1,6 +1,13 @@
 // https://github.com/typescript-exercises/typescript-exercises/blob/main/src/components/monaco-editor/revalidate-model.ts
-import { editor, languages, MarkerSeverity } from 'monaco-editor';
+import type { editor } from 'monaco-editor';
 import { DiagnosticMessageChain } from 'typescript';
+import { Monaco } from '@monaco-editor/react';
+
+export let monacoInstance: Monaco | undefined;
+
+export function assignMonacoInstance(monaco: Monaco) {
+  monacoInstance = monaco;
+}
 
 export function flattenDiagnosticMessageText(
   diag: string | DiagnosticMessageChain | undefined,
@@ -31,8 +38,9 @@ export function flattenDiagnosticMessageText(
 }
 
 export async function validateMonacoModel(model?: editor.IModel) {
-  if (!model || model.isDisposed()) return;
-  const getWorker = await languages.typescript.getTypeScriptWorker();
+  if (!monacoInstance || !model || model.isDisposed()) return;
+  const getWorker =
+    await monacoInstance.languages.typescript.getTypeScriptWorker();
   const worker = await getWorker(model.uri);
   if (model.isDisposed()) return;
   const diagnostics = (
@@ -46,7 +54,7 @@ export async function validateMonacoModel(model?: editor.IModel) {
     const start = model.getPositionAt(d.start!);
     const end = model.getPositionAt(d.start! + d.length!);
     return {
-      severity: MarkerSeverity.Error,
+      severity: monacoInstance!.MarkerSeverity.Error,
       startLineNumber: start.lineNumber,
       startColumn: start.column,
       endLineNumber: end.lineNumber,
@@ -54,5 +62,5 @@ export async function validateMonacoModel(model?: editor.IModel) {
       message: flattenDiagnosticMessageText(d.messageText, '\n'),
     };
   });
-  editor.setModelMarkers(model, 'typescript', markers);
+  monacoInstance.editor.setModelMarkers(model, 'typescript', markers);
 }
