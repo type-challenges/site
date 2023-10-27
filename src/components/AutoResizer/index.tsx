@@ -30,7 +30,7 @@ export function decorateWithAutoResize<T>(
               height: newHeight,
             };
           });
-        }, 200);
+        }, 100);
         window.addEventListener('resize', updateSize, { passive: true });
         const interval = setInterval(updateSize, 200);
         return function () {
