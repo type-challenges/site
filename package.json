@@ -1,7 +1,6 @@
 {
   "name": "typescript-tutorial-exercises",
   "version": "1.0.0",
-  "main": "index.js",
   "author": {
     "name": "ZLY201",
     "email": "zilongyao1366@gmail.com"
@@ -11,8 +10,8 @@
     "reset": "rm -rf node_modules",
     "setup": "yarn reset && yarn",
     "clean": "rm -rf dist",
-    "dev": "rspack serve --watch --env development",
-    "build": "yarn clean && rspack build --env production",
+    "dev": "rspack serve --watch --mode=development",
+    "build": "yarn clean && rspack build --mode=production",
     "lint": "eslint --fix --color --cache --quiet .",
     "prepare": "husky install"
   },

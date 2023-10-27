@@ -15,7 +15,11 @@ import {
   ProblemTestReplaceVal,
 } from '@src/utils/problems';
 import i18nJson from '@config/i18n.json';
-import { monacoInstance, validateMonacoModel } from '@src/utils/monaco';
+import {
+  monacoEditorLoaded,
+  monacoInstance,
+  validateMonacoModel,
+} from '@src/utils/monaco';
 import styles from './index.module.less';
 
 const enum MainTab {
@@ -41,6 +45,12 @@ const Results = function () {
   const [cases, setCases] = useState(noCases ? [NULL_CASE] : originCases);
   const [testRaw, setTestRaw] = useState<string | undefined>(undefined);
   const [casesErrors, setCasesErrors] = useState<string[][]>([]);
+  const [btnDisabled, setBtnDisabled] = useState(true);
+
+  const monacoEditorStatusListener = useCallback(
+    () => setBtnDisabled(false),
+    [setBtnDisabled],
+  );
 
   const updateData = useCallback(
     debounce(async function (problem: Problem) {
@@ -62,6 +72,17 @@ const Results = function () {
     },
     [currentProblem],
   );
+
+  useEffect(function () {
+    if (!monacoEditorLoaded) {
+      emitter.on('monacoEditorLoaded', monacoEditorStatusListener);
+    } else {
+      setBtnDisabled(false);
+    }
+    return function () {
+      emitter.off('monacoEditorLoaded', monacoEditorStatusListener);
+    };
+  }, []);
 
   async function run() {
     if (!monacoInstance || !testRaw) return;
@@ -139,7 +160,7 @@ const Results = function () {
       ],
       status,
     });
-    emitter.emit('submit-code');
+    emitter.emit('submitCode');
     setActiveMainTab(MainTab.result);
     setLoading(false);
   }
@@ -259,13 +280,19 @@ const Results = function () {
           </CustomTabs.TabPane>
         </CustomTabs>
         <div className={styles.footer}>
-          <Button type={'primary'} className={styles.btn} onClick={run}>
+          <Button
+            type={'primary'}
+            onClick={run}
+            disabled={btnDisabled}
+            className={styles.btn}
+          >
             {i18nJson['run_code'][setting.language]}
           </Button>
           <Button
             type={'primary'}
             status={'success'}
             onClick={onSubmit}
+            disabled={btnDisabled}
             className={styles.btn}
           >
             {i18nJson['submit_code'][setting.language]}

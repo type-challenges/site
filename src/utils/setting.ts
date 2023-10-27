@@ -60,7 +60,8 @@ const settingList: {
       },
     ],
     onChange(next, prev) {
-      emitter.emit('tabSizeChange', prev, next);
+      // TODO: Required
+      emitter.emit('tabSizeChange', prev!, next);
     },
   },
   language: {

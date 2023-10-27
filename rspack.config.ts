@@ -2,30 +2,30 @@ import path from 'path';
 import type { Configuration } from '@rspack/cli';
 import { ArcoDesignPlugin } from '@arco-plugins/unplugin-react';
 
-export default function createRspackConfig(env: {
-  production?: boolean;
-}): Configuration {
-  const { production } = env;
+export default function createRspackConfig(): Configuration {
+  const mode = process.env.NODE_ENV as Configuration['mode'];
   return {
+    mode,
     context: __dirname,
     entry: {
       main: './src/main.tsx',
     },
     output: {
+      path: path.resolve(__dirname, 'dist'),
       filename: '[name].[contenthash:8].bundle.js',
       chunkFilename: '[name].[contenthash:8].bundle.js',
       cssChunkFilename: '[name].[contenthash:8].bundle.js',
-      path: path.resolve(__dirname, 'dist'),
     },
     builtins: {
       html: [
         {
-          template: './html/index.html',
           minify: true,
+          template: './html/index.html',
+          favicon: './src/static/favicon.svg',
         },
       ],
     },
-    devtool: production ? false : 'source-map',
+    devtool: mode === 'production' ? false : 'source-map',
     resolve: {
       alias: {
         '@config': path.resolve(__dirname, './config'),

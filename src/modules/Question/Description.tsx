@@ -60,7 +60,7 @@ const Description = function () {
   );
 
   useEffect(function () {
-    emitter.on('submit-code', () => setState(prev => !prev));
+    emitter.on('submitCode', () => setState(prev => !prev));
   }, []);
 
   return (
