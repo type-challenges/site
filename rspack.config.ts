@@ -21,7 +21,7 @@ export default function createRspackConfig(): Configuration {
         {
           minify: true,
           template: './html/index.html',
-          favicon: './src/static/favicon.svg',
+          favicon: './assets/favicon.svg',
         },
       ],
     },
