@@ -28,7 +28,9 @@
     "not dead",
     "not op_mini all"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.less"
+  ],
   "dependencies": {
     "@arco-design/theme-line": "^0.0.3",
     "@arco-design/web-react": "^2.53.2",
@@ -52,6 +54,7 @@
     "@svgr/webpack": "^8.1.0",
     "@types/event-emitter": "^0.3.4",
     "@types/lodash.debounce": "^4.0.7",
+    "@types/node": "^20.8.9",
     "@types/react": "^17.0.67",
     "@types/react-copy-to-clipboard": "^5.0.6",
     "@types/react-dom": "^17.0.21",
