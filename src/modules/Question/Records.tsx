@@ -120,7 +120,7 @@ const Records = function () {
                 item.time,
               );
               if (success) {
-                emitter.emit('delete-problem-record');
+                emitter.emit('deleteProblemRecord');
                 Message.success(
                   i18nJson['successfully_delete'][setting.language],
                 );
@@ -137,8 +137,8 @@ const Records = function () {
   ];
 
   useEffect(function () {
-    emitter.on('submit-code', () => setState(prev => !prev));
-    emitter.on('delete-problem-record', () => setState(prev => !prev));
+    emitter.on('submitCode', () => setState(prev => !prev));
+    emitter.on('deleteProblemRecord', () => setState(prev => !prev));
   }, []);
 
   const records = useMemo(

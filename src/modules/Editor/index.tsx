@@ -78,14 +78,12 @@ function Editor() {
           <IconUndo />
         </a>
       </div>
-      {loading && (
-        <Skeleton
-          className={styles.skeleton}
-          text={{ rows: 3 }}
-          animation={true}
-        />
-      )}
-      {!loading && (
+      <Skeleton
+        className={styles.skeleton}
+        text={{ rows: 3 }}
+        animation={true}
+        loading={loading}
+      >
         <div className={styles['monaco-wrapper']}>
           <MonacoEditor
             namespace={currentProblem.key}
@@ -95,7 +93,7 @@ function Editor() {
             setting={setting}
           />
         </div>
-      )}
+      </Skeleton>
     </div>
   );
 }

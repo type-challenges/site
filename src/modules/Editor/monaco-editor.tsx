@@ -12,7 +12,11 @@ import {
 } from '@src/utils/problems';
 import { Setting } from '@src/utils/setting';
 import emitter from '@src/utils/emit';
-import { assignMonacoInstance, validateMonacoModel } from '@src/utils/monaco';
+import {
+  assignMonacoInstance,
+  setMonacoEditorStatus,
+  validateMonacoModel,
+} from '@src/utils/monaco';
 import styles from './index.module.less';
 
 export interface MonacoEditorProps {
@@ -25,23 +29,20 @@ export interface MonacoEditorProps {
   setting: Setting;
 }
 
-interface Models {
-  [key: string]: editor.IModel;
-}
-
 const MonacoEditor = decorateWithAutoResize(
   class extends React.Component<MonacoEditorProps> {
     protected instance: editor.IStandaloneCodeEditor | null = null;
-    protected models: Models = {};
+    protected models: Record<string, editor.IModel | undefined> = {};
     protected viewStates: { [filename: string]: editor.ICodeEditorViewState } =
       {};
     protected lastUpdates: { [filename: string]: string } = {};
     updateTabSize = (prev: Setting['tabSize'], next: Setting['tabSize']) => {
       const model = this.models[ProblemFiles.template];
-      model.setValue(formatCodeByUpdateTabSize(model.getValue(), prev, next));
+      model?.setValue(
+        formatCodeByUpdateTabSize(model?.getValue() || '', prev, next),
+      );
     };
     beforeMount = (monaco: Monaco) => {
-      assignMonacoInstance(monaco);
       monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
         strict: true,
         target: monaco.languages.typescript.ScriptTarget.ES2018,
@@ -61,6 +62,8 @@ const MonacoEditor = decorateWithAutoResize(
         inherit: true,
         rules: [],
       });
+      monaco.editor.setTheme(this.props.setting.theme);
+      assignMonacoInstance(monaco);
       for (const [filename, { content }] of Object.entries(this.props.raw)) {
         this.lastUpdates[filename] = content;
         const model = monaco.editor.createModel(
@@ -80,12 +83,16 @@ const MonacoEditor = decorateWithAutoResize(
     };
     onMount = (instance: editor.IStandaloneCodeEditor) => {
       this.instance = instance;
+      this.instance.updateOptions(this.props.setting);
+      setMonacoEditorStatus(true);
+      emitter.emit('monacoEditorLoaded');
       emitter.on('tabSizeChange', this.updateTabSize);
     };
     componentWillUnmount() {
+      setMonacoEditorStatus(false);
       emitter.off('tabSizeChange', this.updateTabSize);
       for (const filename of Object.keys(this.models)) {
-        this.models[filename].dispose();
+        this.models[filename]?.dispose();
       }
       if (this.instance) {
         this.instance.dispose();
@@ -105,7 +112,7 @@ const MonacoEditor = decorateWithAutoResize(
         const model = this.models[newSelectedFilename];
         this.viewStates[prevProps.selectedFilename] =
           this.instance.saveViewState()!;
-        this.instance.setModel(model);
+        model && this.instance.setModel(model);
         this.instance.updateOptions({
           readOnly: Boolean(this.props.raw[newSelectedFilename].readOnly),
         });
@@ -125,12 +132,12 @@ const MonacoEditor = decorateWithAutoResize(
         for (const [filename, value] of Object.entries(this.props.raw)) {
           if (value.content !== this.lastUpdates[filename]) {
             this.lastUpdates[filename] = value.content;
-            this.models[filename].setValue(value.content);
+            this.models[filename]?.setValue(value.content);
           }
         }
       }
       for (const filename of Object.keys(this.props.raw)) {
-        this.models[filename].updateOptions(this.props.setting);
+        this.models[filename]?.updateOptions(this.props.setting);
         if (!filename.includes('node_modules')) {
           validateMonacoModel(this.models[filename]);
         }
@@ -151,6 +158,7 @@ const MonacoEditor = decorateWithAutoResize(
           }
           beforeMount={this.beforeMount}
           onMount={this.onMount}
+          theme={this.props.setting.theme === 'light' ? 'vs' : 'vs-dark'}
           options={{
             ...this.props.setting,
             renderValidationDecorations: 'on',

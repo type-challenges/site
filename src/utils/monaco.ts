@@ -4,9 +4,14 @@ import { DiagnosticMessageChain } from 'typescript';
 import { Monaco } from '@monaco-editor/react';
 
 export let monacoInstance: Monaco | undefined;
+export let monacoEditorLoaded = false;
 
 export function assignMonacoInstance(monaco: Monaco) {
   monacoInstance = monaco;
+}
+
+export function setMonacoEditorStatus(status: boolean) {
+  monacoEditorLoaded = status;
 }
 
 export function flattenDiagnosticMessageText(

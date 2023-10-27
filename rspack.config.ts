@@ -2,30 +2,30 @@ import path from 'path';
 import type { Configuration } from '@rspack/cli';
 import { ArcoDesignPlugin } from '@arco-plugins/unplugin-react';
 
-export default function createRspackConfig(env: {
-  production?: boolean;
-}): Configuration {
-  const { production } = env;
+export default function createRspackConfig(): Configuration {
+  const mode = process.env.NODE_ENV as Configuration['mode'];
   return {
+    mode,
     context: __dirname,
     entry: {
       main: './src/main.tsx',
     },
     output: {
+      path: path.resolve(__dirname, 'dist'),
       filename: '[name].[contenthash:8].bundle.js',
       chunkFilename: '[name].[contenthash:8].bundle.js',
       cssChunkFilename: '[name].[contenthash:8].bundle.js',
-      path: path.resolve(__dirname, 'dist'),
     },
     builtins: {
       html: [
         {
-          template: './html/index.html',
           minify: true,
+          template: './html/index.html',
+          favicon: './assets/favicon.svg',
         },
       ],
     },
-    devtool: production ? false : 'source-map',
+    devtool: mode === 'production' ? false : 'source-map',
     resolve: {
       alias: {
         '@config': path.resolve(__dirname, './config'),
@@ -75,21 +75,15 @@ export default function createRspackConfig(env: {
     },
     optimization: {
       splitChunks: {
-        minSize: 500 * 1024,
-        maxSize: 1000 * 1024,
+        chunks: 'all',
+        minSize: 100 * 1024,
+        maxSize: 200 * 1024,
         cacheGroups: {
-          common0: {
+          common: {
             chunks: 'all',
             test: /[\\/]node_modules[\\/](react|react-dom|@arco-design[\\/]web-react)[\\/]/,
             priority: 100,
-            name: 'common0',
-            reuseExistingChunk: true,
-          },
-          common1: {
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](react-syntax-highlighter|refractor)[\\/]/,
-            priority: 100,
-            name: 'common1',
+            name: 'common',
             reuseExistingChunk: true,
           },
           vendors: {
