@@ -1,11 +1,15 @@
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
   oneDark,
   oneLight,
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import ts from 'react-syntax-highlighter/dist/esm/languages/prism/typescript';
 import ReactMarkdown from 'react-markdown';
 import { Setting } from '@src/utils/setting';
 import styles from './index.module.less';
+
+SyntaxHighlighter.registerLanguage('ts', ts);
+SyntaxHighlighter.registerLanguage('typescript', ts);
 
 const Markdown = function (props: {
   content: string;

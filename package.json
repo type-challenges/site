@@ -28,6 +28,7 @@
     "not dead",
     "not op_mini all"
   ],
+  "sideEffects": false,
   "dependencies": {
     "@arco-design/theme-line": "^0.0.3",
     "@arco-design/web-react": "^2.53.2",

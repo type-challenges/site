@@ -75,21 +75,15 @@ export default function createRspackConfig(): Configuration {
     },
     optimization: {
       splitChunks: {
-        minSize: 500 * 1024,
-        maxSize: 1000 * 1024,
+        chunks: 'all',
+        minSize: 100 * 1024,
+        maxSize: 200 * 1024,
         cacheGroups: {
-          common0: {
+          common: {
             chunks: 'all',
             test: /[\\/]node_modules[\\/](react|react-dom|@arco-design[\\/]web-react)[\\/]/,
             priority: 100,
-            name: 'common0',
-            reuseExistingChunk: true,
-          },
-          common1: {
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](react-syntax-highlighter|refractor)[\\/]/,
-            priority: 100,
-            name: 'common1',
+            name: 'common',
             reuseExistingChunk: true,
           },
           vendors: {
