@@ -21,7 +21,7 @@ export default function createRspackConfig(): Configuration {
         {
           minify: true,
           template: './html/index.html',
-          favicon: './assets/favicon.svg',
+          favicon: './assets/favicon.png',
         },
       ],
     },
@@ -29,6 +29,7 @@ export default function createRspackConfig(): Configuration {
     resolve: {
       alias: {
         '@config': path.resolve(__dirname, './config'),
+        '@problems': path.resolve(__dirname, './problems'),
         '@src': path.resolve(__dirname, './src'),
       },
     },

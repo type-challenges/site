@@ -11,6 +11,23 @@ declare module 'event-emitter' {
     }
   }
   declare function ee<T>(): ee.Emitter<T>;
-
   export = ee;
+}
+
+declare module '@problems/index' {
+  import type { ProblemDocs } from '@src/utils/problems';
+  import type { Setting } from '@src/utils/setting';
+  declare type FilePrefixes = ['check', 'template', 'test'];
+  const problemsUrl: {
+    [subjectKey: string]: {
+      [key: string]: {
+        [file in FilePrefixes[number]]: string;
+      } & {
+        [key in ProblemDocs]: {
+          [key in Setting['language']]: string;
+        };
+      };
+    };
+  };
+  export = problemsUrl;
 }

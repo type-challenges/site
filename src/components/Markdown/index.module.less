@@ -1,3 +1,24 @@
+blockquote {
+  margin: 0;
+  padding: 8px;
+  background-color: var(--color-neutral-2);
+  border-left: 4px solid var(--color-neutral-3);
+  border-radius: 4px;
+  * {
+    margin: 0;
+  }
+  p:not(:last-child) {
+    margin-bottom: 4px;
+  }
+}
+code {
+  margin: 0 2px;
+  padding: 2px 4px;
+  vertical-align: middle;
+  font-size: 14px;
+  line-height: 14px;
+  background-color: var(--color-neutral-2);
+}
 .markdown-code {
   font-size: 14px;
   :global(.react-syntax-highlighter-line-number) {

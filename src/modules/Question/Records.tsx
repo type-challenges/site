@@ -59,13 +59,18 @@ const ViewCode = function (props: { code: string }) {
 };
 
 const Records = function () {
-  const [{ currentProblem, setting }] = useContext(Context);
+  const [
+    {
+      currentProblem,
+      setting: { language },
+    },
+  ] = useContext(Context);
   const [state, setState] = useState(false);
 
   const columns: TableColumnProps[] = [
     {
       dataIndex: 'status',
-      title: i18nJson['status'][setting.language],
+      title: i18nJson['status'][language],
       render(status: PROBLEM_STATUS) {
         if (status === PROBLEM_STATUS.accepted) {
           return <Accepted>Accepted</Accepted>;
@@ -76,21 +81,21 @@ const Records = function () {
     },
     {
       dataIndex: 'time',
-      title: i18nJson['time'][setting.language],
+      title: i18nJson['time'][language],
       render(time: number) {
         return dayjs(time).format('YYYY-MM-DD HH:mm:ss');
       },
     },
     {
       dataIndex: 'code',
-      title: i18nJson['code'][setting.language],
+      title: i18nJson['code'][language],
       render(_, item: ProblemRecord) {
         return <ViewCode code={item.code} />;
       },
     },
     {
       dataIndex: 'options',
-      title: i18nJson['options'][setting.language],
+      title: i18nJson['options'][language],
       render(
         _,
         item: {
@@ -100,16 +105,16 @@ const Records = function () {
         return (
           <CopyToClipboard
             text={item.code}
-            onCopy={() => Message.success('Copied!')}
+            onCopy={() => Message.success(i18nJson['copied'][language])}
           >
-            <a>{i18nJson['copy'][setting.language]}</a>
+            <a>{i18nJson['copy'][language]}</a>
           </CopyToClipboard>
         );
       },
     },
     {
       dataIndex: 'operate',
-      title: i18nJson['operate'][setting.language],
+      title: i18nJson['operate'][language],
       render(_, item: ProblemRecord & { problem: string }) {
         return (
           <a
@@ -121,10 +126,8 @@ const Records = function () {
               );
               if (success) {
                 emitter.emit('deleteProblemRecord');
-                Message.success(
-                  i18nJson['successfully_delete'][setting.language],
-                );
-              } else Message.error(i18nJson['failed_delete'][setting.language]);
+                Message.success(i18nJson['successfully_delete'][language]);
+              } else Message.error(i18nJson['failed_delete'][language]);
             }}
           >
             <IconDelete
@@ -174,7 +177,7 @@ const Records = function () {
                   <IconEmpty />
                 </div>
                 <div className={'arco-empty-description'}>
-                  {i18nJson['no_data'][setting.language]}
+                  {i18nJson['no_data'][language]}
                 </div>
               </div>
             </div>
@@ -182,7 +185,7 @@ const Records = function () {
         }
       />
       <div className={styles['record-tip']}>
-        Tips: {i18nJson['record_tip'][setting.language]}
+        Tips: {i18nJson['record_tip'][language]}
       </div>
     </div>
   );
