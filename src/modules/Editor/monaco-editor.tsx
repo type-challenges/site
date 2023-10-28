@@ -21,7 +21,7 @@ import styles from './index.module.less';
 
 loader.config({
   paths: {
-    vs: '/assets/monaco-editor/min/vs',
+    vs: './assets/monaco-editor/min/vs',
   },
 });
 
