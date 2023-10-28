@@ -1,7 +1,7 @@
 // https://github.com/typescript-exercises/typescript-exercises/blob/main/src/components/monaco-editor/index.tsx
 import debounce from 'lodash.debounce';
 import React from 'react';
-import { Editor, Monaco } from '@monaco-editor/react';
+import { Editor, Monaco, loader } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { Skeleton } from '@arco-design/web-react';
 import { decorateWithAutoResize } from '@src/components/AutoResizer';
@@ -18,6 +18,12 @@ import {
   validateMonacoModel,
 } from '@src/utils/monaco';
 import styles from './index.module.less';
+
+loader.config({
+  paths: {
+    vs: '/assets/monaco-editor/min/vs',
+  },
+});
 
 export interface MonacoEditorProps {
   width?: number | string;
