@@ -1,7 +1,6 @@
-.github/
-.husky/
-.vscode/
-coverage/
-dist/
-docs/
-node_modules/
+.github
+.husky
+.vscode
+dist
+node_modules
+assets

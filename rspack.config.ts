@@ -6,6 +6,7 @@ export default function createRspackConfig(): Configuration {
   const mode = process.env.NODE_ENV as Configuration['mode'];
   return {
     mode,
+    stats: mode === 'production',
     context: __dirname,
     entry: {
       main: './src/main.tsx',
@@ -24,6 +25,15 @@ export default function createRspackConfig(): Configuration {
           favicon: './assets/favicon.png',
         },
       ],
+      copy: {
+        patterns: [
+          {
+            from: './assets/monaco-editor',
+            to: './assets/monaco-editor',
+            force: true,
+          },
+        ],
+      },
     },
     devtool: mode === 'production' ? false : 'source-map',
     resolve: {
