@@ -1,6 +1,8 @@
 import axios from 'axios';
+import { Message } from '@arco-design/web-react';
+import * as problemsUrl from '@problems/index';
 import problemsJson from '@config/problems.json';
-import * as problemsUrl from '@src/problems';
+import i18nJson from '@config/i18n.json';
 import localCache from '@src/utils/local-cache';
 import { Setting } from '@src/utils/setting';
 import typeAssertions from '../../node_modules/type-assertions/lib/index.d.ts?raw';
@@ -54,6 +56,22 @@ export const NULL_CASE: NonNullable<Problem['cases']>[number] = {
   target: 'null',
 };
 
+async function Get<T>(url: string, fallback: T) {
+  try {
+    const response = await axios.get<T>(url);
+    const { status, data } = response;
+    if (status < 200 || status >= 300) {
+      throw new Error(JSON.stringify(response));
+    }
+    return data;
+  } catch (e) {
+    console.error(e);
+    const { language } = localCache.getSettingCache();
+    Message.error(i18nJson['request_error'][language]);
+  }
+  return fallback;
+}
+
 export function getProblems(): Problem[] {
   return problemsJson.map((problem, index) => ({
     ...problem,
@@ -106,38 +124,34 @@ export function formatCodeByUpdateTabSize(
 export async function getProblemRaw(problem: Problem): Promise<ProblemRaw> {
   const raw: ProblemRaw = { ...DEFAULT_RAW };
   const { subjectKey, key } = problem;
-  try {
-    await Promise.all(
-      filePrefixes.map(function (prefix) {
-        if (ProblemFiles.template.includes(prefix)) {
-          const problemsCacheJson = localCache.getProblemCacheJson();
-          const cache = problemsCacheJson[problem.key];
-          if (typeof cache?.lastUpdated === 'string') {
-            raw[ProblemFiles[prefix]] = {
-              ...raw[ProblemFiles[prefix]],
-              content: cache.lastUpdated,
-            };
-            return;
-          }
-        }
-        const url = problemsUrl[subjectKey][key][prefix];
-        return axios.get<string>(url).then(function ({ data }) {
-          if (ProblemFiles.template.includes(prefix)) {
-            const { tabSize } = localCache.getSettingCache();
-            if (tabSize === 4) {
-              data = formatCodeByUpdateTabSize(data, 2, 4);
-            }
-          }
+  await Promise.all(
+    filePrefixes.map(function (prefix) {
+      if (ProblemFiles.template.includes(prefix)) {
+        const problemsCacheJson = localCache.getProblemCacheJson();
+        const cache = problemsCacheJson[problem.key];
+        if (typeof cache?.lastUpdated === 'string') {
           raw[ProblemFiles[prefix]] = {
             ...raw[ProblemFiles[prefix]],
-            content: data.replace(/\n\/\/ @ts-ignore/g, ''),
+            content: cache.lastUpdated,
           };
-        });
-      }),
-    );
-  } catch {
-    /* empty */
-  }
+          return;
+        }
+      }
+      const url = problemsUrl[subjectKey][key][prefix];
+      return Get<string>(url, '').then(function (data) {
+        if (ProblemFiles.template.includes(prefix)) {
+          const { tabSize } = localCache.getSettingCache();
+          if (tabSize === 4) {
+            data = formatCodeByUpdateTabSize(data, 2, 4);
+          }
+        }
+        raw[ProblemFiles[prefix]] = {
+          ...raw[ProblemFiles[prefix]],
+          content: data.replace(/\n\/\/ @ts-ignore/g, ''),
+        };
+      });
+    }),
+  );
   return raw;
 }
 
@@ -147,28 +161,19 @@ export async function getProblemDocs(
   language: Setting['language'] = 'en',
 ) {
   const { subjectKey, key } = problem;
-  try {
-    const url = problemsUrl[subjectKey][key][type][language];
-    const { data } = await axios.get<string>(url);
-    return data;
-  } catch {
-    /* empty */
-  }
-  return '';
+  const url =
+    problemsUrl[subjectKey][key][type][language] ||
+    problemsUrl[subjectKey][key][type]['en'];
+  return await Get<string>(url, '');
 }
 
-export async function getProblemTestRaw(problem: Problem) {
+export async function getProblemTestRaw(
+  problem: Problem,
+): Promise<string | undefined> {
   const { subjectKey, key } = problem;
-  try {
-    const testFileUrl = problemsUrl[subjectKey][key]['test'];
-    if (testFileUrl === undefined) {
-      const checkFileUrl = problemsUrl[subjectKey][key]['check'];
-      const { data } = await axios.get<string>(checkFileUrl);
-      return data.replace(/\n\/\/ @ts-ignore/g, '').trim();
-    }
-    const { data } = await axios.get<string>(testFileUrl);
-    return data.replace(/\n\/\/ @ts-ignore/g, '').trim();
-  } catch (e) {
-    /* empty */
-  }
+  const url =
+    problemsUrl[subjectKey][key]['test'] ||
+    problemsUrl[subjectKey][key]['check'];
+  const data = await Get<string>(url, undefined as unknown as string);
+  return data?.replace(/\n\/\/ @ts-ignore/g, '').trim();
 }

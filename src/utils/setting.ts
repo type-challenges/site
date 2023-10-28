@@ -4,7 +4,7 @@ export type Setting = {
   theme: 'light' | 'dark';
   fontSize: number;
   tabSize: 2 | 4;
-  language: 'en' | 'zh-cn';
+  language: 'en' | 'zhCN';
 };
 
 const settingList: {
@@ -21,11 +21,11 @@ const settingList: {
     languageKey: 'theme',
     options: [
       {
-        text: 'light',
+        text: 'Light',
         value: 'light',
       },
       {
-        text: 'dark',
+        text: 'Dark',
         value: 'dark',
       },
     ],
@@ -73,7 +73,7 @@ const settingList: {
       },
       {
         text: '简体中文',
-        value: 'zh-cn',
+        value: 'zhCN',
       },
     ],
   },

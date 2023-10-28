@@ -83,6 +83,7 @@ const MonacoEditor = decorateWithAutoResize(
     };
     onMount = (instance: editor.IStandaloneCodeEditor) => {
       this.instance = instance;
+      this.instance.layout();
       this.instance.updateOptions(this.props.setting);
       setMonacoEditorStatus(true);
       emitter.emit('monacoEditorLoaded');
@@ -106,6 +107,12 @@ const MonacoEditor = decorateWithAutoResize(
       if (!this.instance) {
         return;
       }
+      if (
+        this.props.width !== prevProps.width ||
+        this.props.height !== prevProps.height
+      ) {
+        this.instance.layout();
+      }
       this.instance.updateOptions(this.props.setting);
       const newSelectedFilename = this.props.selectedFilename;
       if (newSelectedFilename !== prevProps.selectedFilename) {
@@ -121,12 +128,6 @@ const MonacoEditor = decorateWithAutoResize(
           this.instance.restoreViewState(viewState);
         }
         this.instance.focus();
-      }
-      if (
-        this.props.width !== prevProps.width ||
-        this.props.height !== prevProps.height
-      ) {
-        this.instance.layout();
       }
       if (this.props.raw !== prevProps.raw) {
         for (const [filename, value] of Object.entries(this.props.raw)) {
@@ -168,6 +169,7 @@ const MonacoEditor = decorateWithAutoResize(
             autoIndent: 'advanced',
             formatOnPaste: true,
             formatOnType: true,
+            automaticLayout: false,
           }}
         />
       );

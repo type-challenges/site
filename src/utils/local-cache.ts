@@ -43,7 +43,7 @@ const localCache = {
     try {
       json = JSON.parse(cache) as ProblemsCacheJson;
     } catch {
-      /* empty */
+      localStorage.removeItem(localCache.__PROBLEM_CACHE_KEY__);
     }
     return json;
   },
@@ -122,7 +122,7 @@ const localCache = {
     try {
       json = JSON.parse(cache) as Setting;
     } catch {
-      /* empty */
+      localStorage.removeItem(localCache.__SETTING_CACHE_KEY__);
     }
     return { ...DEFAULT_SETTING, ...json };
   },

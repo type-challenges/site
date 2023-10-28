@@ -5,7 +5,7 @@ const Footer = function () {
   return (
     <div className={styles.container}>
       <a href={linkJson.github} target={'_blank'} rel="noreferrer">
-        © 2023-Present ZLY201
+        copyright © 2023-Present ZLY201
       </a>
     </div>
   );

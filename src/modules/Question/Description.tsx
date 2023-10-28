@@ -14,6 +14,7 @@ import localCache from '@src/utils/local-cache';
 import SubmitStatus from '@src/components/SubmitStatus';
 import emitter from '@src/utils/emit';
 import i18nJson from '@config/i18n.json';
+import { Setting } from '@src/utils/setting';
 import styles from './index.module.less';
 
 const Description = function () {
@@ -43,8 +44,12 @@ const Description = function () {
   );
 
   const updateData = useCallback(
-    debounce(async function (problem: Problem) {
-      const desc = await getProblemDocs(problem, ProblemDocs.description);
+    debounce(async function (problem: Problem, language?: Setting['language']) {
+      const desc = await getProblemDocs(
+        problem,
+        ProblemDocs.description,
+        language,
+      );
       setDesc(desc);
       setLoading(false);
     }, 500),
@@ -54,9 +59,9 @@ const Description = function () {
   useEffect(
     function () {
       setLoading(true);
-      updateData(currentProblem);
+      updateData(currentProblem, language);
     },
-    [currentProblem],
+    [currentProblem, language],
   );
 
   useEffect(function () {
@@ -89,16 +94,10 @@ const Description = function () {
                   <div className={styles['desc-case-title']}>
                     {`${i18nJson['case'][language]} ${index + 1}:`}
                   </div>
-                  <div className={styles['desc-case-content']}>
-                    <div className={styles['desc-case-content-inner']}>
-                      <div className={styles['desc-case-content-source']}>
-                        Source: {source}
-                      </div>
-                      <div className={styles['desc-case-content-target']}>
-                        Target: {target}
-                      </div>
-                    </div>
-                  </div>
+                  <blockquote className={styles['desc-case-content']}>
+                    <p>Source: {source}</p>
+                    <p>Target: {target}</p>
+                  </blockquote>
                 </div>
               );
             })}

@@ -25,6 +25,9 @@
       "@config/*": [
         "./config/*"
       ],
+      "@problems/*": [
+        "./problems/*"
+      ],
       "@src/*": [
         "./src/*"
       ]

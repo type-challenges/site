@@ -46,8 +46,8 @@
             "./src"
           ],
           [
-            "@exercises",
-            "./exercises"
+            "@problems",
+            "./problems"
           ]
         ]
       },
