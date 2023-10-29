@@ -11,6 +11,7 @@ on:
       - package.json
       - yarn.lock
     branches:
+      - dev
       - main
 
 concurrency:
