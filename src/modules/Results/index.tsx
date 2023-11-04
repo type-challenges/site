@@ -20,6 +20,7 @@ import {
   monacoInstance,
   validateMonacoModel,
 } from '@src/utils/monaco';
+import { Setting } from '@src/utils/setting';
 import styles from './index.module.less';
 
 const enum MainTab {
@@ -35,6 +36,58 @@ function formatErrorFromMarkers(markers: editor.IMarker[]) {
   });
 }
 
+function createResultError(status: string[]) {
+  return (
+    <div className={styles['result-errors']}>
+      <div className={styles['result-error-title']}>Compilation Error</div>
+      <div className={styles['result-error-info']}>
+        {status.map(function (error) {
+          return (
+            <div key={error} className={styles['result-error-item']}>
+              {error}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function createCasesError(
+  cases: NonNullable<Problem['cases']>,
+  casesErrors: string[][],
+  language: Setting['language'],
+) {
+  return (
+    <CustomTabs className={styles['case-tabs']}>
+      {cases.map(function (_, index) {
+        const result = casesErrors[index];
+        return (
+          <CustomTabs.TabPane
+            key={index}
+            title={`${i18nJson['case'][language]} ${index + 1}`}
+          >
+            {result.length > 0 && (
+              <div className={styles['result-error-info']}>
+                {result.map(function (error) {
+                  return (
+                    <div key={error} className={styles['result-error-item']}>
+                      {error}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {result.length === 0 && (
+              <div className={styles['result-pass']}>Pass!</div>
+            )}
+          </CustomTabs.TabPane>
+        );
+      })}
+    </CustomTabs>
+  );
+}
+
 const Results = function () {
   const [{ currentProblem, setting }] = useContext(Context);
   const [loading, setLoading] = useState(true);
@@ -46,6 +99,7 @@ const Results = function () {
   const [testRaw, setTestRaw] = useState<string | undefined>(undefined);
   const [casesErrors, setCasesErrors] = useState<string[][]>([]);
   const [btnDisabled, setBtnDisabled] = useState(true);
+  const [activeCase, setActiveCase] = useState<string>('0');
 
   const monacoEditorStatusListener = useCallback(
     () => setBtnDisabled(false),
@@ -58,6 +112,7 @@ const Results = function () {
       setTestRaw(raw);
       setStatus([]);
       setCasesErrors([]);
+      setActiveCase('0');
       setCases(problem.cases || [NULL_CASE]);
       setActiveMainTab(MainTab.cases);
       setLoading(false);
@@ -170,54 +225,9 @@ const Results = function () {
       if (typeof status === 'string') {
         return <div className={styles['result-accept']}>Accepted!</div>;
       } else if (Array.isArray(status) && status.length > 0) {
-        return (
-          <div className={styles['result-errors']}>
-            <div className={styles['result-error-title']}>
-              Compilation Error
-            </div>
-            <div className={styles['result-error-info']}>
-              {status.map(function (error) {
-                return (
-                  <div key={error} className={styles['result-error-item']}>
-                    {error}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
+        return createResultError(status);
       } else if (casesErrors.length > 0) {
-        return (
-          <CustomTabs className={styles['case-tabs']}>
-            {cases.map(function (_, index) {
-              const result = casesErrors[index];
-              return (
-                <CustomTabs.TabPane
-                  key={index}
-                  title={`${i18nJson['case'][setting.language]} ${index + 1}`}
-                >
-                  {result.length > 0 && (
-                    <div className={styles['result-error-info']}>
-                      {result.map(function (error) {
-                        return (
-                          <div
-                            key={error}
-                            className={styles['result-error-item']}
-                          >
-                            {error}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                  {result.length === 0 && (
-                    <div className={styles['result-pass']}>Pass!</div>
-                  )}
-                </CustomTabs.TabPane>
-              );
-            })}
-          </CustomTabs>
-        );
+        return createCasesError(cases, casesErrors, setting.language);
       } else {
         return (
           <div className={styles['result-empty']}>
@@ -228,6 +238,37 @@ const Results = function () {
     },
     [cases, casesErrors, status],
   );
+
+  function onAddCase() {
+    if (cases.length >= 5) return;
+    setActiveCase(String(cases.length));
+    setCases([...cases, NULL_CASE]);
+  }
+
+  function onDeleteCase(key: string) {
+    if (cases.length <= 1) return;
+    if (String(cases.length - 1) === activeCase) {
+      setActiveCase(String(cases.length - 2));
+    }
+    setCases(cases.filter((_, index) => String(index) !== key));
+  }
+
+  function onChangeCase(
+    key: number,
+    newCase: Partial<NonNullable<Problem['cases']>[number]>,
+  ) {
+    setCases(
+      cases.map(function (originCase, index) {
+        if (key === index) {
+          return {
+            ...originCase,
+            ...newCase,
+          };
+        }
+        return originCase;
+      }),
+    );
+  }
 
   return (
     <Skeleton
@@ -246,7 +287,14 @@ const Results = function () {
             key={MainTab.cases}
             title={i18nJson[MainTab.cases][setting.language]}
           >
-            <CustomTabs className={styles['case-tabs']}>
+            <CustomTabs
+              editable={!noCases}
+              onAddTab={onAddCase}
+              onDeleteTab={onDeleteCase}
+              activeTab={activeCase}
+              onChange={setActiveCase}
+              className={styles['case-tabs']}
+            >
               {cases.map(function ({ source, target }, index) {
                 return (
                   <CustomTabs.TabPane
@@ -259,6 +307,9 @@ const Results = function () {
                       autoSize={true}
                       readOnly={noCases}
                       className={styles['case-input']}
+                      onChange={newSource =>
+                        onChangeCase(index, { source: newSource })
+                      }
                     />
                     <div className={styles['case-header']}>Target</div>
                     <Input.TextArea
@@ -266,6 +317,9 @@ const Results = function () {
                       autoSize={true}
                       readOnly={noCases}
                       className={styles['case-input']}
+                      onChange={newTarget =>
+                        onChangeCase(index, { target: newTarget })
+                      }
                     />
                   </CustomTabs.TabPane>
                 );
