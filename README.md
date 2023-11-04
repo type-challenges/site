@@ -11,7 +11,7 @@ Please go to [typescript-tutorial-exercises.github.io](https://typescript-tutori
 
 ## Contribution
 
-Feel free to dive in! Open an issue or submit PRs. It may be helpful to read the [Contributor Guide](https://github.com/typescript-tutorial-exercises/core/blob/main/.github/CONTRIBUTING.md).
+Feel free to dive in! Open an issue or submit PRs. It may be helpful to read the [Contributor Guide](./.github/CONTRIBUTING.md).
 
 ### Contributors
 
@@ -19,6 +19,13 @@ Thanks goes to these wonderful people:
 
 [![contributors](https://contrib.rocks/image?repo=typescript-tutorial-exercises/core)](https://github.com/typescript-tutorial-exercises/core/graphs/contributors)
 
+
 ## License
 
-[MIT](https://github.com/typescript-tutorial-exercises/core/blob/main/LICENSE) © [ZLY201](https://github.com/zly201)
+This project is free and open-source software licensed under the [MIT License](./LICENSE).
+
+This project partially copies code from the following projects, their licenses are listed in [Third-party library licenses](./THIRD-PARTY-LICENSE).
+
+| Project       | License       |
+| ------------- | ------------- |
+| [typescript-exercises/typescript-exercises](https://github.com/typescript-exercises/typescript-exercises) | [MIT](https://github.com/typescript-exercises/typescript-exercises/blob/main/LICENSE)  |
