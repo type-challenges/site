@@ -114,5 +114,25 @@
   "request_error": {
     "en": "Network error, please check your network or refresh the page",
     "zhCN": "网络请求失败，请检查网络状况后刷新重试"
+  },
+  "confirm_title": {
+    "en": "Confirm",
+    "zhCN": "确认"
+  },
+  "confirm_btn": {
+    "en": "confirm",
+    "zhCN": "确认"
+  },
+  "cancel_btn": {
+    "en": "cancel",
+    "zhCN": "取消"
+  },
+  "confirm_reset_code": {
+    "en": "Are you sure to reset code?",
+    "zhCN": "确认重置代码？"
+  },
+  "confirm_reset_cases": {
+    "en": "Are you sure to reset cases?",
+    "zhCN": "确认重置示例？"
   }
 }

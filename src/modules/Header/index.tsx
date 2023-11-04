@@ -37,7 +37,7 @@ const Header = function () {
       <a
         style={{ color: 'inherit' }}
         className={styles.icon}
-        href={linkJson.github}
+        href={linkJson['github-repo']}
         target={'_blank'}
         rel="noreferrer"
       >
