@@ -13,6 +13,7 @@ import settingList from '@src/utils/setting';
 import Question from '@src/modules/Question';
 import localCache from '@src/utils/local-cache';
 import Results from '@src/modules/Results';
+import { setCurrentProblemForUrl } from '@src/utils/url';
 import styles from './index.module.less';
 import './global.less';
 
@@ -40,6 +41,7 @@ function App() {
             context.currentProblem !== update.currentProblem
           ) {
             updateCache(update.currentProblem.key);
+            setCurrentProblemForUrl(update.currentProblem.key);
           }
           setContext({
             ...context,
