@@ -1,8 +1,16 @@
 import type { editor } from 'monaco-editor';
 import dayjs from 'dayjs';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Button, Input, Skeleton } from '@arco-design/web-react';
+import {
+  Button,
+  Input,
+  Modal,
+  Skeleton,
+  TabsProps,
+  Tooltip,
+} from '@arco-design/web-react';
 import debounce from 'lodash.debounce';
+import { IconUndo } from '@arco-design/web-react/icon';
 import { CustomTabs } from '@src/components/CustomTabs';
 import localCache, { PROBLEM_STATUS } from '@src/utils/local-cache';
 import emitter from '@src/utils/emit';
@@ -89,7 +97,12 @@ function createCasesError(
 }
 
 const Results = function () {
-  const [{ currentProblem, setting }] = useContext(Context);
+  const [
+    {
+      currentProblem,
+      setting: { language },
+    },
+  ] = useContext(Context);
   const [loading, setLoading] = useState(true);
   const [activeMainTab, setActiveMainTab] = useState<string>(MainTab.cases);
   const [status, setStatus] = useState<string[] | 'Accept!'>([]);
@@ -227,11 +240,11 @@ const Results = function () {
       } else if (Array.isArray(status) && status.length > 0) {
         return createResultError(status);
       } else if (casesErrors.length > 0) {
-        return createCasesError(cases, casesErrors, setting.language);
+        return createCasesError(cases, casesErrors, language);
       } else {
         return (
           <div className={styles['result-empty']}>
-            {i18nJson['please_run_or_submit_first'][setting.language]}
+            {i18nJson['please_run_or_submit_first'][language]}
           </div>
         );
       }
@@ -270,6 +283,48 @@ const Results = function () {
     );
   }
 
+  function resetCases() {
+    const modal = Modal.confirm({
+      title: i18nJson['confirm_title'][language],
+      content: i18nJson['confirm_reset_cases'][language],
+      okText: i18nJson['confirm_btn'][language],
+      cancelText: i18nJson['cancel_btn'][language],
+      onOk: async function () {
+        setActiveCase('0');
+        setCases(originCases.length == 0 ? [NULL_CASE] : originCases);
+        modal.close();
+      },
+    });
+  }
+
+  const renderTabHeader: TabsProps['renderTabHeader'] = function (
+    tabProps,
+    DefaultTabHeader,
+  ) {
+    if (noCases) {
+      return <DefaultTabHeader {...tabProps} />;
+    }
+    return (
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div style={{ flex: 1 }}>
+          <DefaultTabHeader {...tabProps} />
+        </div>
+        <a onClick={resetCases}>
+          <Tooltip mini={true} content={'reset'}>
+            <IconUndo />
+          </Tooltip>
+        </a>
+      </div>
+    );
+  };
+
   return (
     <Skeleton
       loading={loading}
@@ -285,7 +340,7 @@ const Results = function () {
         >
           <CustomTabs.TabPane
             key={MainTab.cases}
-            title={i18nJson[MainTab.cases][setting.language]}
+            title={i18nJson[MainTab.cases][language]}
           >
             <CustomTabs
               editable={!noCases}
@@ -294,12 +349,13 @@ const Results = function () {
               activeTab={activeCase}
               onChange={setActiveCase}
               className={styles['case-tabs']}
+              renderTabHeader={renderTabHeader}
             >
               {cases.map(function ({ source, target }, index) {
                 return (
                   <CustomTabs.TabPane
                     key={index}
-                    title={`${i18nJson['case'][setting.language]} ${index + 1}`}
+                    title={`${i18nJson['case'][language]} ${index + 1}`}
                   >
                     <div className={styles['case-header']}>Source</div>
                     <Input.TextArea
@@ -328,7 +384,7 @@ const Results = function () {
           </CustomTabs.TabPane>
           <CustomTabs.TabPane
             key={MainTab.result}
-            title={i18nJson[MainTab.result][setting.language]}
+            title={i18nJson[MainTab.result][language]}
           >
             {resultContent}
           </CustomTabs.TabPane>
@@ -340,7 +396,7 @@ const Results = function () {
             disabled={btnDisabled}
             className={styles.btn}
           >
-            {i18nJson['run_code'][setting.language]}
+            {i18nJson['run_code'][language]}
           </Button>
           <Button
             type={'primary'}
@@ -349,7 +405,7 @@ const Results = function () {
             disabled={btnDisabled}
             className={styles.btn}
           >
-            {i18nJson['submit_code'][setting.language]}
+            {i18nJson['submit_code'][language]}
           </Button>
         </div>
       </div>
