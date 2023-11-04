@@ -27,7 +27,10 @@ const Description = function () {
   const {
     key,
     title,
-    contributor: { name, link } = { name: 'ZLY201', link: linkJson.github },
+    contributor: { name, link } = {
+      name: 'ZLY201',
+      link: linkJson['github-zly201'],
+    },
     cases = [NULL_CASE],
   } = currentProblem;
   const [desc, setDesc] = useState('');
