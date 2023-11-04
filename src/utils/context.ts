@@ -2,6 +2,10 @@ import React from 'react';
 import localCache from '@src/utils/local-cache';
 import { getProblems, Problem } from '@src/utils/problems';
 import { Setting } from '@src/utils/setting';
+import {
+  getCurrentProblemFromUrl,
+  setCurrentProblemForUrl,
+} from '@src/utils/url';
 
 export type Context = {
   setting: Setting;
@@ -13,12 +17,19 @@ export type SetContext = React.Dispatch<Partial<Context>>;
 
 export function getContext(): Context {
   const problems = getProblems();
-  const { currentProblem: key = problems[0].key } =
-    localCache.getProblemCacheJson();
+  const { currentProblem: key } = localCache.getProblemCacheJson();
+  const urlCurrentProblem = getCurrentProblemFromUrl();
+  const searchKey = urlCurrentProblem || key;
+  const currentProblem = problems.filter(
+    problem => problem.key === searchKey,
+  )[0];
+  if (currentProblem === undefined) {
+    setCurrentProblemForUrl(problems[0].key);
+  }
   return {
     setting: localCache.getSettingCache(),
     problems,
-    currentProblem: problems.filter(problem => problem.key === key)[0]!,
+    currentProblem: currentProblem || problems[0],
   };
 }
 
