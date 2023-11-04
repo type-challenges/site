@@ -70,4 +70,4 @@ All our source files are written in typescript, please make sure your submission
 
 Thank you to all the people who have already contributed to `typescript-tutorial-exercises`!
 
-<a href="https://github.com/typescript-tutorial-exercises/core/graphs/contributors"><img src="https://contrib.rocks/image?repo=typescript-tutorial-exercises/core" /></a>
+[![contributors](https://contrib.rocks/image?repo=typescript-tutorial-exercises/core)](https://github.com/typescript-tutorial-exercises/core/graphs/contributors)
