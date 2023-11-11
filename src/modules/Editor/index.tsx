@@ -1,4 +1,4 @@
-import { Modal, Skeleton } from '@arco-design/web-react';
+import { Modal, Skeleton, Tooltip } from '@arco-design/web-react';
 import { IconCode, IconUndo } from '@arco-design/web-react/icon';
 import debounce from 'lodash.debounce';
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -44,10 +44,10 @@ function Editor() {
 
   function resetCode() {
     const modal = Modal.confirm({
-      title: 'Confirm',
-      content: 'Are you sure to reset code?',
-      okText: 'confirm',
-      cancelText: 'cancel',
+      title: i18nJson['confirm_title'][setting.language],
+      content: i18nJson['confirm_reset_code'][setting.language],
+      okText: i18nJson['confirm_btn'][setting.language],
+      cancelText: i18nJson['cancel_btn'][setting.language],
       onOk: async function () {
         setLoading(true);
         localCache.setProblemCache(currentProblem.key, {
@@ -75,7 +75,9 @@ function Editor() {
           {i18nJson['code'][setting.language]}
         </span>
         <a onClick={resetCode} className={styles.reset}>
-          <IconUndo />
+          <Tooltip mini={true} content={'reset'}>
+            <IconUndo />
+          </Tooltip>
         </a>
       </div>
       <Skeleton
