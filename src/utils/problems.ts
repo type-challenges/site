@@ -5,7 +5,7 @@ import problemsJson from '@config/problems.json';
 import i18nJson from '@config/i18n.json';
 import localCache from '@src/utils/local-cache';
 import { Setting } from '@src/utils/setting';
-import typeAssertions from '../../node_modules/type-assertions/lib/index.d.ts?raw';
+import typeAssertions from '@problems/type-assertions';
 
 export type Problem = {
   key: string;
