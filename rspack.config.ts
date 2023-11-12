@@ -1,9 +1,16 @@
 import path from 'path';
 import type { Configuration } from '@rspack/cli';
 import { ArcoDesignPlugin } from '@arco-plugins/unplugin-react';
+import { CopyRspackPlugin, DefinePlugin } from '@rspack/core';
+import HtmlRspackPlugin from '@rspack/plugin-html';
 
 export default function createRspackConfig(): Configuration {
   const mode = process.env.NODE_ENV as Configuration['mode'];
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const _ = require(path.resolve(__dirname, 'output/ssr.bundle.js'));
+  // @ts-ignore
+  const ssrFunc = global.getSSRContent;
+  const ssrContent = ssrFunc();
   return {
     mode,
     stats: mode === 'production',
@@ -17,24 +24,6 @@ export default function createRspackConfig(): Configuration {
       chunkFilename: '[name].[contenthash:8].bundle.js',
       cssChunkFilename: '[name].[contenthash:8].bundle.js',
     },
-    builtins: {
-      html: [
-        {
-          minify: true,
-          template: './html/index.html',
-          favicon: './assets/favicon.png',
-        },
-      ],
-      copy: {
-        patterns: [
-          {
-            from: './assets/monaco-editor',
-            to: './assets/monaco-editor',
-            force: true,
-          },
-        ],
-      },
-    },
     devtool: mode === 'production' ? false : 'source-map',
     resolve: {
       alias: {
@@ -43,8 +32,39 @@ export default function createRspackConfig(): Configuration {
         '@src': path.resolve(__dirname, './src'),
       },
     },
+    builtins: {
+      css: {
+        modules: {
+          localIdentName: '[path][name]__[local]--[hash:6]',
+        },
+      },
+    },
     plugins: [
+      new HtmlRspackPlugin({
+        minify: true,
+        sri: 'sha256',
+        inject: 'body',
+        scriptLoading: 'defer',
+        favicon: './assets/favicon.png',
+        template: './html/index.html',
+        templateParameters: {
+          ROOT_CONTENT: ssrContent,
+        },
+      }),
+      new CopyRspackPlugin({
+        patterns: [
+          {
+            from: './assets/monaco-editor',
+            to: './assets/monaco-editor',
+            force: true,
+          },
+        ],
+      }),
+      new DefinePlugin({
+        WEBPACK_IS_SSR: false,
+      }),
       new ArcoDesignPlugin({
+        style: 'css',
         theme: '@arco-design/theme-line',
       }),
     ],
@@ -59,25 +79,8 @@ export default function createRspackConfig(): Configuration {
           type: 'asset/source',
         },
         {
-          test: /\.less$/,
+          test: /\.less$/i,
           use: [
-            {
-              loader: 'style-loader',
-            },
-            {
-              loader: 'css-loader',
-              options: {
-                modules: {
-                  mode: 'local',
-                  auto: true,
-                  exportGlobals: true,
-                  localIdentName: '[path][name]__[local]--[hash:base64:5]',
-                  localIdentContext: path.resolve(__dirname, 'src'),
-                  exportLocalsConvention: 'camelCase',
-                  exportOnlyLocals: false,
-                },
-              },
-            },
             {
               loader: 'less-loader',
               options: {
@@ -87,6 +90,21 @@ export default function createRspackConfig(): Configuration {
               },
             },
           ],
+          type: 'css',
+        },
+        {
+          test: /\.module\.less$/i,
+          use: [
+            {
+              loader: 'less-loader',
+              options: {
+                lessOptions: {
+                  javascriptEnabled: true,
+                },
+              },
+            },
+          ],
+          type: 'css/module',
         },
         {
           test: /\.svg$/,

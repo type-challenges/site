@@ -2,7 +2,8 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ESNext"
+    "target": "ESNext",
+    "noImplicitAny": false
   },
   "include": ["."],
   "exclude": []

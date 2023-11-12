@@ -62,7 +62,7 @@ function App() {
           <Layout.Header className={styles.header}>
             <Header />
           </Layout.Header>
-          <Layout className={styles.content}>
+          <Layout hasSider={true} className={styles.content}>
             <Layout.Sider
               width={'40%'}
               className={styles.left}
@@ -71,7 +71,7 @@ function App() {
               <Question />
             </Layout.Sider>
             <Layout.Content className={styles.right}>
-              <Layout className={styles['right-layout']}>
+              <Layout hasSider={true} className={styles['right-layout']}>
                 <Layout.Content className={styles['right-layout-top']}>
                   <Editor />
                 </Layout.Content>
