@@ -1,31 +1,39 @@
 import path from 'path';
 import type { Configuration } from '@rspack/cli';
 import { ArcoDesignPlugin } from '@arco-plugins/unplugin-react';
+import { CopyRspackPlugin, DefinePlugin } from '@rspack/core';
+import HtmlRspackPlugin from '@rspack/plugin-html';
+import createBaseRspackConfig from './rspack.base.config';
 
 export default function createRspackConfig(): Configuration {
+  const baseConfig = createBaseRspackConfig();
   const mode = process.env.NODE_ENV as Configuration['mode'];
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const getSSRContent = require(
+    path.resolve(__dirname, 'dist/ssr/ssr.bundle.js'),
+  ).default;
+  const ssrContent = getSSRContent();
   return {
+    ...baseConfig,
     mode,
     stats: mode === 'production',
-    context: __dirname,
     entry: {
       main: './src/main.tsx',
     },
-    output: {
-      path: path.resolve(__dirname, 'dist'),
-      filename: '[name].[contenthash:8].bundle.js',
-      chunkFilename: '[name].[contenthash:8].bundle.js',
-      cssChunkFilename: '[name].[contenthash:8].bundle.js',
-    },
-    builtins: {
-      html: [
-        {
-          minify: true,
-          template: './html/index.html',
-          favicon: './assets/favicon.png',
+    devtool: mode === 'production' ? false : 'source-map',
+    plugins: [
+      new HtmlRspackPlugin({
+        minify: true,
+        sri: 'sha256',
+        inject: 'body',
+        scriptLoading: 'defer',
+        favicon: './assets/favicon.png',
+        template: './html/index.html',
+        templateParameters: {
+          ROOT_CONTENT: ssrContent,
         },
-      ],
-      copy: {
+      }),
+      new CopyRspackPlugin({
         patterns: [
           {
             from: './assets/monaco-editor',
@@ -33,68 +41,15 @@ export default function createRspackConfig(): Configuration {
             force: true,
           },
         ],
-      },
-    },
-    devtool: mode === 'production' ? false : 'source-map',
-    resolve: {
-      alias: {
-        '@config': path.resolve(__dirname, './config'),
-        '@problems': path.resolve(__dirname, './problems'),
-        '@src': path.resolve(__dirname, './src'),
-      },
-    },
-    plugins: [
+      }),
+      new DefinePlugin({
+        WEBPACK_IS_SSR: false,
+      }),
       new ArcoDesignPlugin({
+        style: 'css',
         theme: '@arco-design/theme-line',
       }),
     ],
-    module: {
-      rules: [
-        {
-          resourceQuery: /url$/,
-          type: 'asset/resource',
-        },
-        {
-          resourceQuery: /raw$/,
-          type: 'asset/source',
-        },
-        {
-          test: /\.less$/,
-          use: [
-            {
-              loader: 'style-loader',
-            },
-            {
-              loader: 'css-loader',
-              options: {
-                modules: {
-                  mode: 'local',
-                  auto: true,
-                  exportGlobals: true,
-                  localIdentName: '[path][name]__[local]--[hash:base64:5]',
-                  localIdentContext: path.resolve(__dirname, 'src'),
-                  exportLocalsConvention: 'camelCase',
-                  exportOnlyLocals: false,
-                },
-              },
-            },
-            {
-              loader: 'less-loader',
-              options: {
-                lessOptions: {
-                  javascriptEnabled: true,
-                },
-              },
-            },
-          ],
-        },
-        {
-          test: /\.svg$/,
-          issuer: /\.[jt]sx?$/,
-          use: ['@svgr/webpack'],
-        },
-      ],
-    },
     optimization: {
       splitChunks: {
         chunks: 'all',

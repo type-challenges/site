@@ -6,7 +6,13 @@ assert<Equal<typeof constant.str, string>>();
 // @ts-ignore
 assert<Equal<typeof constant.num, number>>();
 // @ts-ignore
+assert<Equal<typeof constant.big_int, bigint>>();
+// @ts-ignore
 assert<Equal<typeof constant.bool, boolean>>();
+// @ts-ignore
+assert<Equal<typeof constant.mySymbol, symbol>>();
+// @ts-ignore
+assert<Equal<typeof constant.undef, undefined>>();
 // @ts-ignore
 assert<Equal<typeof constant.arr, number[]>>();
 // @ts-ignore

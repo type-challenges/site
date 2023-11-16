@@ -4,7 +4,6 @@ import React from 'react';
 import { Editor, Monaco, loader } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { Skeleton } from '@arco-design/web-react';
-import { decorateWithAutoResize } from '@src/components/AutoResizer';
 import {
   formatCodeByUpdateTabSize,
   ProblemFiles,
@@ -17,6 +16,7 @@ import {
   setMonacoEditorStatus,
   validateMonacoModel,
 } from '@src/utils/monaco';
+import withAutoResize from './autoResize';
 import styles from './index.module.less';
 
 loader.config({
@@ -35,9 +35,9 @@ export interface MonacoEditorProps {
   setting: Setting;
 }
 
-const MonacoEditor = decorateWithAutoResize(
+const MonacoEditor = withAutoResize(
   class extends React.Component<MonacoEditorProps> {
-    protected instance: editor.IStandaloneCodeEditor | null = null;
+    protected instance?: editor.IStandaloneCodeEditor;
     protected models: Record<string, editor.IModel | undefined> = {};
     protected viewStates: { [filename: string]: editor.ICodeEditorViewState } =
       {};
@@ -49,13 +49,6 @@ const MonacoEditor = decorateWithAutoResize(
       );
     };
     beforeMount = (monaco: Monaco) => {
-      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-        strict: true,
-        target: monaco.languages.typescript.ScriptTarget.ES2018,
-        moduleResolution:
-          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-        typeRoots: ['declarations'],
-      });
       monaco.editor.defineTheme('light', {
         base: 'vs',
         colors: {},
@@ -68,6 +61,13 @@ const MonacoEditor = decorateWithAutoResize(
         inherit: true,
         rules: [],
       });
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        target: monaco.languages.typescript.ScriptTarget.ESNext,
+        module: monaco.languages.typescript.ModuleKind.ESNext,
+        moduleResolution:
+          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
+      });
       monaco.editor.setTheme(this.props.setting.theme);
       assignMonacoInstance(monaco);
       for (const [filename, { content }] of Object.entries(this.props.raw)) {
@@ -77,13 +77,15 @@ const MonacoEditor = decorateWithAutoResize(
           undefined,
           monaco.Uri.file(`${this.props.namespace}/${filename}`),
         );
-        model.onDidChangeContent(
-          debounce(() => {
-            const newValue = model.getValue();
-            this.lastUpdates[filename] = newValue;
-            this.props.onChange?.(filename as ProblemFiles, newValue);
-          }, 200),
-        );
+        if (filename === 'template.ts') {
+          model.onDidChangeContent(
+            debounce(() => {
+              const newValue = model.getValue();
+              this.lastUpdates[filename] = newValue;
+              this.props.onChange?.(filename, newValue);
+            }, 200),
+          );
+        }
         this.models[filename] = model;
       }
     };
@@ -107,7 +109,7 @@ const MonacoEditor = decorateWithAutoResize(
       this.models = {};
       this.viewStates = {};
       this.lastUpdates = {};
-      this.instance = null;
+      this.instance = undefined;
     }
     componentDidUpdate(prevProps: Readonly<MonacoEditorProps>): void {
       if (!this.instance) {
@@ -145,17 +147,19 @@ const MonacoEditor = decorateWithAutoResize(
       }
       for (const filename of Object.keys(this.props.raw)) {
         this.models[filename]?.updateOptions(this.props.setting);
-        if (!filename.includes('node_modules')) {
+        if (!filename.includes('/node_modules/')) {
           validateMonacoModel(this.models[filename]);
         }
       }
     }
     render() {
+      const { width, height, setting, namespace, selectedFilename } =
+        this.props;
       return (
         <Editor
-          width={this.props.width}
-          height={this.props.height}
-          defaultPath={`${this.props.namespace}/${this.props.selectedFilename}`}
+          width={width}
+          height={height}
+          defaultPath={`${namespace}/${selectedFilename}`}
           loading={
             <Skeleton
               className={styles.skeleton}
@@ -165,9 +169,9 @@ const MonacoEditor = decorateWithAutoResize(
           }
           beforeMount={this.beforeMount}
           onMount={this.onMount}
-          theme={this.props.setting.theme === 'light' ? 'vs' : 'vs-dark'}
+          theme={setting.theme === 'light' ? 'vs' : 'vs-dark'}
           options={{
-            ...this.props.setting,
+            ...setting,
             renderValidationDecorations: 'on',
             minimap: {
               enabled: false,
