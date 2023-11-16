@@ -121,7 +121,7 @@ export function formatCodeByUpdateTabSize(
     .join('\n');
 }
 
-export async function getProblemRaw(problem: Problem): Promise<ProblemRaw> {
+export async function getProblemRaw(problem: Problem) {
   const raw: ProblemRaw = { ...DEFAULT_RAW };
   const { subjectKey, key } = problem;
   await Promise.all(
@@ -167,13 +167,11 @@ export async function getProblemDocs(
   return await Get<string>(url, '');
 }
 
-export async function getProblemTestRaw(
-  problem: Problem,
-): Promise<string | undefined> {
+export async function getProblemTestRaw(problem: Problem) {
   const { subjectKey, key } = problem;
   const url =
     problemsUrl[subjectKey][key]['test'] ||
     problemsUrl[subjectKey][key]['check'];
-  const data = await Get<string>(url, undefined as unknown as string);
+  const data = await Get<string | undefined>(url, undefined);
   return data?.replace(/\n\/\/ @ts-ignore/g, '').trim();
 }

@@ -1,36 +1,26 @@
 import path from 'path';
 import type { Configuration } from '@rspack/cli';
 import { HtmlRspackPlugin, DefinePlugin } from '@rspack/core';
+import createBaseRspackConfig from './rspack.base.config';
 
-export default function createRspackConfig(): Configuration {
+export default function createSSRRspackConfig(): Configuration {
+  const baseConfig = createBaseRspackConfig();
   const mode = process.env.NODE_ENV as Configuration['mode'];
   return {
+    ...baseConfig,
     mode,
     target: 'node',
-    context: __dirname,
     entry: {
       ssr: './src/ssr.tsx',
     },
     output: {
-      path: path.resolve(__dirname, 'output'),
+      path: path.resolve(__dirname, 'dist/ssr'),
       filename: 'ssr.bundle.js',
+      library: {
+        type: 'commonjs',
+      },
     },
     devtool: false,
-    resolve: {
-      alias: {
-        '@config': path.resolve(__dirname, './config'),
-        '@problems': path.resolve(__dirname, './problems'),
-        '@src': path.resolve(__dirname, './src'),
-      },
-    },
-    builtins: {
-      css: {
-        modules: {
-          exportsOnly: true,
-          localIdentName: '[path][name]__[local]--[hash:6]',
-        },
-      },
-    },
     plugins: [
       new HtmlRspackPlugin({
         templateContent: '<!DOCTYPE html><html lang="en"></html>',
@@ -39,50 +29,5 @@ export default function createRspackConfig(): Configuration {
         WEBPACK_IS_SSR: true,
       }),
     ],
-    module: {
-      rules: [
-        {
-          resourceQuery: /url$/,
-          type: 'asset/resource',
-        },
-        {
-          resourceQuery: /raw$/,
-          type: 'asset/source',
-        },
-        {
-          test: /\.less$/i,
-          use: [
-            {
-              loader: 'less-loader',
-              options: {
-                lessOptions: {
-                  javascriptEnabled: true,
-                },
-              },
-            },
-          ],
-          type: 'css',
-        },
-        {
-          test: /\.module\.less$/i,
-          use: [
-            {
-              loader: 'less-loader',
-              options: {
-                lessOptions: {
-                  javascriptEnabled: true,
-                },
-              },
-            },
-          ],
-          type: 'css/module',
-        },
-        {
-          test: /\.svg$/,
-          issuer: /\.[jt]sx?$/,
-          use: ['@svgr/webpack'],
-        },
-      ],
-    },
   };
 }

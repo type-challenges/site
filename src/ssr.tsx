@@ -1,7 +1,6 @@
 import { renderToString } from 'react-dom/server';
 import App from './App';
 
-// @ts-ignore
-global.getSSRContent = function getSSRContent() {
+export default function getSSRContent() {
   return renderToString(<App />);
-};
+}

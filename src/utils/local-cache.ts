@@ -37,12 +37,12 @@ const localCache = {
   __PROBLEM_CACHE_KEY__: '__problem_cache__',
   __SETTING_CACHE_KEY__: '__setting_cache__',
   getProblemCacheJson(): Partial<ProblemsCacheJson> {
-    let json = {};
+    let json: ProblemsCacheJson = {};
     if (WEBPACK_IS_SSR) return json;
     const cache = localStorage.getItem(localCache.__PROBLEM_CACHE_KEY__);
     if (!cache) return json;
     try {
-      json = JSON.parse(cache) as ProblemsCacheJson;
+      json = JSON.parse(cache);
     } catch {
       localStorage.removeItem(localCache.__PROBLEM_CACHE_KEY__);
     }
@@ -122,7 +122,7 @@ const localCache = {
       return json;
     }
     try {
-      json = JSON.parse(cache) as Setting;
+      json = JSON.parse(cache);
     } catch {
       localStorage.removeItem(localCache.__SETTING_CACHE_KEY__);
     }

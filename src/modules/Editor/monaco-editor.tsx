@@ -4,7 +4,6 @@ import React from 'react';
 import { Editor, Monaco, loader } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { Skeleton } from '@arco-design/web-react';
-import { decorateWithAutoResize } from '@src/components/AutoResizer';
 import {
   formatCodeByUpdateTabSize,
   ProblemFiles,
@@ -17,6 +16,7 @@ import {
   setMonacoEditorStatus,
   validateMonacoModel,
 } from '@src/utils/monaco';
+import withAutoResize from './autoResize';
 import styles from './index.module.less';
 
 loader.config({
@@ -35,7 +35,7 @@ export interface MonacoEditorProps {
   setting: Setting;
 }
 
-const MonacoEditor = decorateWithAutoResize(
+const MonacoEditor = withAutoResize(
   class extends React.Component<MonacoEditorProps> {
     protected instance?: editor.IStandaloneCodeEditor;
     protected models: Record<string, editor.IModel | undefined> = {};
@@ -77,13 +77,15 @@ const MonacoEditor = decorateWithAutoResize(
           undefined,
           monaco.Uri.file(`${this.props.namespace}/${filename}`),
         );
-        model.onDidChangeContent(
-          debounce(() => {
-            const newValue = model.getValue();
-            this.lastUpdates[filename] = newValue;
-            this.props.onChange?.(filename as ProblemFiles, newValue);
-          }, 200),
-        );
+        if (filename === 'template.ts') {
+          model.onDidChangeContent(
+            debounce(() => {
+              const newValue = model.getValue();
+              this.lastUpdates[filename] = newValue;
+              this.props.onChange?.(filename, newValue);
+            }, 200),
+          );
+        }
         this.models[filename] = model;
       }
     };
@@ -145,7 +147,7 @@ const MonacoEditor = decorateWithAutoResize(
       }
       for (const filename of Object.keys(this.props.raw)) {
         this.models[filename]?.updateOptions(this.props.setting);
-        if (!filename.includes('node_modules')) {
+        if (!filename.includes('/node_modules/')) {
           validateMonacoModel(this.models[filename]);
         }
       }

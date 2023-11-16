@@ -22,6 +22,7 @@ function App() {
 
   useEffect(function () {
     settingList['theme'].onChange?.(context.setting.theme);
+    settingList['language'].onChange?.(context.setting.language);
   }, []);
 
   const updateCache = useCallback(

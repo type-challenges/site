@@ -9,7 +9,7 @@
   "scripts": {
     "reset": "rm -rf node_modules",
     "setup": "yarn reset && yarn",
-    "clean": "rm -rf output && rm -rf dist",
+    "clean": "rm -rf dist",
     "dev": "rspack serve --watch",
     "build:ssr": "yarn clean && rspack build --config=rspack.ssr.config.ts",
     "build": "yarn build:ssr && rspack build",
