@@ -12,7 +12,7 @@
     "clean": "rm -rf dist",
     "dev": "rspack serve --watch",
     "build:ssr": "yarn clean && rspack build --config=rspack.ssr.config.ts",
-    "build": "yarn build:ssr && rspack build",
+    "build": "yarn build:ssr && rspack build && rm -rf dist/ssr",
     "lint": "eslint --fix --color --cache --quiet .",
     "prepare": "husky install"
   },
