@@ -1,4 +1,3 @@
-import path from 'path';
 import type { Configuration } from '@rspack/cli';
 import { HtmlRspackPlugin, DefinePlugin } from '@rspack/core';
 import createBaseRspackConfig from './rspack.base.config';
@@ -14,7 +13,7 @@ export default function createSSRRspackConfig(): Configuration {
       ssr: './src/ssr.tsx',
     },
     output: {
-      path: path.resolve(__dirname, 'dist/ssr'),
+      path: './dist/ssr',
       filename: 'ssr.bundle.js',
       library: {
         type: 'commonjs',

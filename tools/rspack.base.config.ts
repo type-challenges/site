@@ -3,21 +3,18 @@ import type { Configuration } from '@rspack/cli';
 
 export default function createBaseRspackConfig(): Configuration {
   return {
-    context: __dirname,
-    entry: {
-      main: './src/main.tsx',
-    },
+    context: path.resolve(__dirname, '..'),
     output: {
-      path: path.resolve(__dirname, 'dist'),
+      path: './dist',
       filename: '[name].[contenthash:8].bundle.js',
       chunkFilename: '[name].[contenthash:8].bundle.js',
       cssChunkFilename: '[name].[contenthash:8].bundle.js',
     },
     resolve: {
       alias: {
-        '@config': path.resolve(__dirname, './config'),
-        '@problems': path.resolve(__dirname, './problems'),
-        '@src': path.resolve(__dirname, './src'),
+        '@config': './config',
+        '@problems': './problems',
+        '@src': './src',
       },
     },
     builtins: {
