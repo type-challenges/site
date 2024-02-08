@@ -3,19 +3,22 @@
     "key": "HelloWorld",
     "subject": "Basic Tutorial",
     "subjectKey": "BasicTutorial",
-    "title": "Hello, world!"
+    "title": "Hello, world!",
+    "author": "ZLY201"
   },
   {
     "key": "EverydayTypes",
     "subject": "Basic Tutorial",
     "subjectKey": "BasicTutorial",
-    "title": "EveryDay Types"
+    "title": "EveryDay Types",
+    "author": "ZLY201"
   },
   {
     "key": "TransposeMatrix",
     "subject": "Difficulties",
     "subjectKey": "Difficulties",
     "title": "Transpose Matrix",
+    "author": "ZLY201",
     "cases": [
       {
         "source": "[[1, 2]]",
