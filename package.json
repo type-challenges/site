@@ -13,6 +13,7 @@
     "dev": "yarn build:ssr && rspack serve --watch",
     "build:ssr": "yarn clean && rspack build --config=rspack.ssr.config.ts",
     "build": "yarn build:ssr && rspack build && rm -rf dist/ssr",
+    "new": "ts-node tools/addNewProblem.ts",
     "lint": "eslint --fix --color --cache --quiet .",
     "prepare": "husky install"
   },
@@ -58,6 +59,7 @@
     "@types/event-emitter": "^0.3.4",
     "@types/lodash.debounce": "^4.0.7",
     "@types/node": "^20.8.9",
+    "@types/prompts": "^2.4.9",
     "@types/react": "^17.0.67",
     "@types/react-copy-to-clipboard": "^5.0.6",
     "@types/react-dom": "^17.0.21",
@@ -82,6 +84,7 @@
     "lint-staged": "^14.0.1",
     "monaco-editor": "^0.44.0",
     "prettier": "^3.0.3",
+    "prompts": "^2.4.2",
     "style-loader": "^3.3.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"

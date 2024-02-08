@@ -12,10 +12,7 @@ export type Problem = {
   subject: string;
   subjectKey: string;
   title: string;
-  contributor?: {
-    name: string;
-    link: string;
-  };
+  author?: string;
   keywords?: string[];
   cases?: {
     source: string;

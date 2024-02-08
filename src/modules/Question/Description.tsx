@@ -3,7 +3,6 @@ import { Skeleton } from '@arco-design/web-react';
 import debounce from 'lodash.debounce';
 import Markdown from '@src/components/Markdown';
 import Context from '@src/utils/context';
-import linkJson from '@config/links.json';
 import {
   getProblemDocs,
   NULL_CASE,
@@ -24,15 +23,7 @@ const Description = function () {
       setting: { theme, language },
     },
   ] = useContext(Context);
-  const {
-    key,
-    title,
-    contributor: { name, link } = {
-      name: 'ZLY201',
-      link: linkJson['github-zly201'],
-    },
-    cases = [NULL_CASE],
-  } = currentProblem;
+  const { key, title, author, cases = [NULL_CASE] } = currentProblem;
   const [desc, setDesc] = useState('');
   const [state, setState] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -107,16 +98,18 @@ const Description = function () {
           </div>
         </Skeleton>
       </div>
-      <div className={styles['desc-footer']}>
-        <a
-          href={link}
-          target={'_blank'}
-          rel="noreferrer"
-          className={styles['desc-contributor']}
-        >
-          Provided By @{name}
-        </a>
-      </div>
+      {author && (
+        <div className={styles['desc-footer']}>
+          <a
+            href={`https://github.com/${author}`}
+            target={'_blank'}
+            rel="noreferrer"
+            className={styles['desc-contributor']}
+          >
+            Provided By @{author}
+          </a>
+        </div>
+      )}
     </div>
   );
 };
