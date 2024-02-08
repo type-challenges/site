@@ -24,17 +24,21 @@ class RspackSSRPlugin implements RspackPluginInstance {
         ? compiler.hooks.watchRun
         : compiler.hooks.beforeRun;
     tabFunc.tapAsync(pluginName, (compiler, callback) => {
-      this.replaceTemplateFile(compiler, callback);
+      this.runSSRBuild(compiler, callback);
+    });
+    tabFunc.tap(pluginName, compiler => {
+      this.replaceTemplateFile(compiler);
     });
     compiler.hooks.done.tap(pluginName, () =>
       this.recoverTemplateFile(compiler),
     );
   }
-  replaceTemplateFile(compiler: Compiler, callback: () => void) {
-    const token = this.options.token;
-    const context = compiler.context;
+  runSSRBuild(compiler: Compiler, callback: () => void) {
     const mode = compiler.options.mode;
-    const templateContent = this.templateContent;
+    if (mode !== 'development') {
+      callback();
+      return;
+    }
     const buildProcess = childProcess.spawn('yarn', [
       'build:ssr',
       `--mode=${mode}`,
@@ -43,24 +47,29 @@ class RspackSSRPlugin implements RspackPluginInstance {
     buildProcess.stderr.on('data', process.stderr.write);
     buildProcess.on('close', function (code) {
       if (code === 0) {
-        const ssrFilePath = path.resolve(context, './dist/ssr/ssr.bundle.js');
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const getSSRContent = require(ssrFilePath).default;
-        delete require.cache[require.resolve(ssrFilePath)];
-        const ssrContent = getSSRContent();
-        const newTemplateContent = templateContent.replace(token, ssrContent);
-        writeFileSync(
-          path.resolve(context, './html/index.html'),
-          newTemplateContent,
-          {
-            encoding: 'utf-8',
-          },
-        );
         callback();
       } else {
         throw new Error(`Generate SSR content failed with code ${code}`);
       }
     });
+  }
+  replaceTemplateFile(compiler: Compiler) {
+    const token = this.options.token;
+    const context = compiler.context;
+    const templateContent = this.templateContent;
+    const ssrFilePath = path.resolve(context, './dist/ssr/ssr.bundle.js');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const getSSRContent = require(ssrFilePath).default;
+    delete require.cache[require.resolve(ssrFilePath)];
+    const ssrContent = getSSRContent();
+    const newTemplateContent = templateContent.replace(token, ssrContent);
+    writeFileSync(
+      path.resolve(context, './html/index.html'),
+      newTemplateContent,
+      {
+        encoding: 'utf-8',
+      },
+    );
   }
   recoverTemplateFile(compiler: Compiler) {
     const context = compiler.context;
