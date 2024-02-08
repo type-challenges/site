@@ -1,18 +1,14 @@
-import path from 'path';
 import type { Configuration } from '@rspack/cli';
-import { ArcoDesignPlugin } from '@arco-plugins/unplugin-react';
-import { CopyRspackPlugin, DefinePlugin } from '@rspack/core';
 import HtmlRspackPlugin from '@rspack/plugin-html';
+import { CopyRspackPlugin, DefinePlugin } from '@rspack/core';
+import { ArcoDesignPlugin } from '@arco-plugins/unplugin-react';
+import RspackSSRPlugin from './RspackSSRPlugin';
 import createBaseRspackConfig from './rspack.base.config';
 
 export default function createRspackConfig(): Configuration {
   const baseConfig = createBaseRspackConfig();
   const mode = process.env.NODE_ENV as Configuration['mode'];
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const getSSRContent = require(
-    path.resolve(__dirname, 'dist/ssr/ssr.bundle.js'),
-  ).default;
-  const ssrContent = getSSRContent();
+  const template = './html/index.html';
   return {
     ...baseConfig,
     mode,
@@ -21,17 +17,21 @@ export default function createRspackConfig(): Configuration {
       main: './src/main.tsx',
     },
     devtool: mode === 'production' ? false : 'source-map',
+    watchOptions: {
+      ignored: template,
+    },
     plugins: [
+      new RspackSSRPlugin({
+        template,
+        token: '{% ROOT_CONTENT %}',
+      }),
       new HtmlRspackPlugin({
+        template,
         minify: true,
         sri: 'sha256',
         inject: 'body',
         scriptLoading: 'defer',
         favicon: './assets/favicon.png',
-        template: './html/index.html',
-        templateParameters: {
-          ROOT_CONTENT: ssrContent,
-        },
       }),
       new CopyRspackPlugin({
         patterns: [

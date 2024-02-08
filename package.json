@@ -10,9 +10,9 @@
     "reset": "rm -rf node_modules",
     "setup": "yarn reset && yarn",
     "clean": "rm -rf dist",
-    "dev": "yarn build:ssr && rspack serve --watch",
-    "build:ssr": "yarn clean && rspack build --config=rspack.ssr.config.ts",
-    "build": "yarn build:ssr && rspack build && rm -rf dist/ssr",
+    "dev": "rspack serve --config=tools/rspack.config.ts --watch",
+    "build:ssr": "rspack build --config=tools/rspack.ssr.config.ts",
+    "build": "yarn clean && yarn build:ssr && rspack build --config=tools/rspack.config.ts && rm -rf dist/ssr",
     "new": "ts-node tools/addNewProblem.ts",
     "lint": "eslint --fix --color --cache --quiet .",
     "prepare": "husky install"

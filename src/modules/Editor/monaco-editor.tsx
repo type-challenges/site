@@ -147,7 +147,7 @@ const MonacoEditor = withAutoResize(
       }
       for (const filename of Object.keys(this.props.raw)) {
         this.models[filename]?.updateOptions(this.props.setting);
-        if (!filename.includes('/node_modules/')) {
+        if (!filename.includes('node_modules')) {
           validateMonacoModel(this.models[filename]);
         }
       }
