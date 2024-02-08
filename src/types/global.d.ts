@@ -1,3 +1,10 @@
+declare const WEBPACK_IS_SSR: boolean;
+
+declare interface ObjectConstructor {
+  keys<const T extends object>(o: T): (keyof T)[];
+  entries<const T extends object>(o: T): [keyof T, T[keyof T]][];
+}
+
 declare module 'event-emitter' {
   declare namespace ee {
     interface Emitter<

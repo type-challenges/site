@@ -26,7 +26,7 @@ export type ProblemsCacheJson = {
 
 const RECORD_MAX_LENGTH = 8;
 
-const DEFAULT_SETTING: Setting = {
+export const DEFAULT_SETTING: Setting = {
   theme: 'light',
   fontSize: 14,
   tabSize: 2,
@@ -36,12 +36,13 @@ const DEFAULT_SETTING: Setting = {
 const localCache = {
   __PROBLEM_CACHE_KEY__: '__problem_cache__',
   __SETTING_CACHE_KEY__: '__setting_cache__',
-  getProblemCacheJson() {
-    let json = {} as ProblemsCacheJson;
+  getProblemCacheJson(): Partial<ProblemsCacheJson> {
+    let json: ProblemsCacheJson = {};
+    if (WEBPACK_IS_SSR) return json;
     const cache = localStorage.getItem(localCache.__PROBLEM_CACHE_KEY__);
     if (!cache) return json;
     try {
-      json = JSON.parse(cache) as ProblemsCacheJson;
+      json = JSON.parse(cache);
     } catch {
       localStorage.removeItem(localCache.__PROBLEM_CACHE_KEY__);
     }
@@ -115,12 +116,13 @@ const localCache = {
     let json: Setting = {
       ...DEFAULT_SETTING,
     };
+    if (WEBPACK_IS_SSR) return json;
     const cache = localStorage.getItem(localCache.__SETTING_CACHE_KEY__);
     if (!cache) {
       return json;
     }
     try {
-      json = JSON.parse(cache) as Setting;
+      json = JSON.parse(cache);
     } catch {
       localStorage.removeItem(localCache.__SETTING_CACHE_KEY__);
     }

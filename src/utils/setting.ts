@@ -76,6 +76,13 @@ const settingList: {
         value: 'zhCN',
       },
     ],
+    onChange(lang) {
+      let langTag: string = lang;
+      if (lang === 'zhCN') {
+        langTag = 'zh-cmn-Hans';
+      }
+      document.documentElement.setAttribute('lang', langTag);
+    },
   },
 };
 

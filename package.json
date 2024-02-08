@@ -10,8 +10,9 @@
     "reset": "rm -rf node_modules",
     "setup": "yarn reset && yarn",
     "clean": "rm -rf dist",
-    "dev": "rspack serve --watch --mode=development",
-    "build": "yarn clean && rspack build --mode=production",
+    "dev": "yarn build:ssr && rspack serve --watch",
+    "build:ssr": "yarn clean && rspack build --config=rspack.ssr.config.ts",
+    "build": "yarn build:ssr && rspack build && rm -rf dist/ssr",
     "new": "ts-node tools/addNewProblem.ts",
     "lint": "eslint --fix --color --cache --quiet .",
     "prepare": "husky install"
@@ -53,6 +54,7 @@
   "devDependencies": {
     "@arco-plugins/unplugin-react": "^1.0.0-alpha.1",
     "@rspack/cli": "^0.3.5",
+    "@rspack/plugin-html": "^0.3.11",
     "@svgr/webpack": "^8.1.0",
     "@types/event-emitter": "^0.3.4",
     "@types/lodash.debounce": "^4.0.7",

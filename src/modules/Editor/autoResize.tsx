@@ -7,10 +7,10 @@ type PropsWithSize<T> = T & {
   height?: string | number;
 };
 
-export function decorateWithAutoResize<T>(
+export default function withAutoResize<T>(
   Component: React.ComponentType<PropsWithSize<T>>,
 ): React.ComponentType<PropsWithSize<T>> {
-  return function AutoResize(props: T) {
+  return function (props: T) {
     const [size, setSize] = useState({ width: '100%', height: '100%' });
     const wrapperRef = useRef<HTMLDivElement>(null);
     useEffect(

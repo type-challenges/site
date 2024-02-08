@@ -2,13 +2,13 @@
   "compilerOptions": {
     "target": "ES6",
     "lib": ["DOM", "ES6"],
-    "outDir": "dist",
     "module": "ES2020",
     "typeRoots": ["./node_modules/@types", "./src/types/**/*.d.ts"],
     "skipLibCheck": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "noImplicitAny": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "strict": true,
@@ -37,6 +37,8 @@
     "src"
   ],
   "exclude": [
+    "dist",
+    "output",
     "assets",
     "node_modules"
   ],

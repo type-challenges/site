@@ -1,0 +1,6 @@
+{
+  "extends": ["../.eslintrc.json"],
+  "rules": {
+    "compat/compat": "off"
+  }
+}
