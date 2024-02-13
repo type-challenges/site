@@ -45,6 +45,9 @@ class RspackSSRPlugin implements RspackPluginInstance {
     ]);
     buildProcess.stdout.on('data', process.stdout.write);
     buildProcess.stderr.on('data', process.stderr.write);
+    buildProcess.on('error', function (e) {
+      throw e;
+    });
     buildProcess.on('close', function (code) {
       if (code === 0) {
         callback();

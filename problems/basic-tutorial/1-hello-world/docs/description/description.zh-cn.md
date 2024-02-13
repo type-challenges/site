@@ -24,8 +24,8 @@ TypeScript 允许指定代码中传递的数据类型，并且能够在类型不
 
 **参考**
 
-> 1.https://www.typescriptlang.org/
+> 1.[https://www.typescriptlang.org/](https://www.typescriptlang.org/)
 >
-> 2.https://www.w3schools.com/typescript/typescript_intro.php
+> 2.[https://www.w3schools.com/typescript/typescript_intro.php](https://www.w3schools.com/typescript/typescript_intro.php)
 >
-> 3.https://github.com/typescript-exercises/typescript-exercises
+> 3.[https://github.com/typescript-exercises/typescript-exercises](https://github.com/typescript-exercises/typescript-exercises)

@@ -20,12 +20,12 @@ import i18nJson from '@config/i18n.json';
 import styles from './index.module.less';
 
 const Accepted = styled.div`
-  font-weight: 500;
+  font-weight: 600;
   color: rgb(var(--green-6));
 `;
 
 const UnAccepted = styled.div`
-  font-weight: 500;
+  font-weight: 600;
   color: rgb(var(--red-6));
 `;
 
@@ -118,7 +118,6 @@ const Records = function () {
       render(_, item: ProblemRecord & { problem: string }) {
         return (
           <a
-            style={{ display: 'flex', alignItems: 'center' }}
             onClick={function () {
               const success = localCache.deleteProblemRecord(
                 item.problem,
@@ -131,7 +130,13 @@ const Records = function () {
             }}
           >
             <IconDelete
-              style={{ width: 18, height: 18, color: 'rgb(var(--red-6))' }}
+              style={{
+                width: 18,
+                height: 18,
+                lineHeight: 1,
+                verticalAlign: 'middle',
+                color: 'rgb(var(--red-6))',
+              }}
             />
           </a>
         );

@@ -2,4 +2,4 @@ Please replace all unknown and any in the code on the right with the correct typ
 
 **Reference**
 
-> https://www.typescriptlang.org/docs/handbook/2/everyday-types.html
+> [https://www.typescriptlang.org/docs/handbook/2/everyday-types.html](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html)

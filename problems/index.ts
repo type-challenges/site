@@ -1,3 +1,4 @@
+export * as Origin from './origin';
 export * as BasicTutorial from './basic-tutorial';
 export * as Difficulties from './difficulties';
 

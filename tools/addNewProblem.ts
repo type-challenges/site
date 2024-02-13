@@ -91,7 +91,6 @@ async function main() {
     subjectKey: handleStringWithDivider(problemType),
     title: handleStringWithDivider(newProblemName, ' '),
     author: githubName,
-    cases: [],
   });
   fs.writeFileSync(
     PROBLEM_JSON_PATH,

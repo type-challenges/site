@@ -24,9 +24,9 @@ Now, you can go to the editor at right of the page to start your TypeScript trav
 
 **Reference**
 
-> 1.https://www.typescriptlang.org/
-> 
-> 2.https://www.w3schools.com/typescript/typescript_intro.php
-> 
-> 3.https://github.com/typescript-exercises/typescript-exercises
+> 1.[https://www.typescriptlang.org/](https://www.typescriptlang.org/)
+>
+> 2.[https://www.w3schools.com/typescript/typescript_intro.php](https://www.w3schools.com/typescript/typescript_intro.php)
+>
+> 3.[https://github.com/typescript-exercises/typescript-exercises](https://github.com/typescript-exercises/typescript-exercises)
 
