@@ -54,7 +54,17 @@ async function main() {
           ? 'This type already exists!'
           : Boolean(value),
     });
-    fs.mkdirSync(path.resolve(PROBLEMS_PATH, newTypeName));
+    const newTypeDirPath = path.resolve(PROBLEMS_PATH, newTypeName);
+    fs.mkdirSync(newTypeDirPath);
+    fs.writeFileSync(path.resolve(newTypeDirPath, 'index.ts'), '');
+    const rootIndexTsPath = path.resolve(PROBLEMS_PATH, 'index.ts');
+    const rootIndexTs = fs.readFileSync(rootIndexTsPath);
+    fs.writeFileSync(
+      rootIndexTsPath,
+      `${rootIndexTs}export * as ${handleStringWithDivider(
+        newTypeName,
+      )} from './${newTypeName}';\n`,
+    );
     problemType = newTypeName;
   }
   const problemDirPath = path.resolve(PROBLEMS_PATH, problemType);
@@ -85,8 +95,15 @@ async function main() {
     `${problemNumber}-${newProblemName}`,
   );
   fs.cpSync(HELLO_WORLD_PATH, newProblemPath, { recursive: true });
+  const indexTsPath = path.resolve(problemDirPath, 'index.ts');
+  const indexTs = fs.readFileSync(indexTsPath);
+  const key = handleStringWithDivider(newProblemName);
+  fs.writeFileSync(
+    indexTsPath,
+    `${indexTs}export * as ${key} from './${problemNumber}-${newProblemName}';\n`,
+  );
   problemJson.push({
-    key: handleStringWithDivider(newProblemName),
+    key,
     subject: handleStringWithDivider(problemType, ' '),
     subjectKey: handleStringWithDivider(problemType),
     title: handleStringWithDivider(newProblemName, ' '),
