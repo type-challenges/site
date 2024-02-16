@@ -37,16 +37,16 @@ async function main() {
     value: NEW_TYPE_TAG,
     description: 'Add a new problem type',
   });
-  let { problemType } = await prompts({
+  let { subject } = await prompts({
     type: 'select',
-    name: 'problemType',
-    message: 'What type of problem do you want to create?',
+    name: 'subject',
+    message: 'What is the subject of problem do you want to create?',
     choices: typesChoices,
   });
-  if (problemType === NEW_TYPE_TAG) {
-    const { newTypeName } = await prompts({
+  if (subject === NEW_TYPE_TAG) {
+    const { newSubject } = await prompts({
       type: 'text',
-      name: 'newTypeName',
+      name: 'newSubject',
       initial: 'template-type',
       message: 'What is the name of the new type?',
       validate: value =>
@@ -54,7 +54,7 @@ async function main() {
           ? 'This type already exists!'
           : Boolean(value),
     });
-    const newTypeDirPath = path.resolve(PROBLEMS_PATH, newTypeName);
+    const newTypeDirPath = path.resolve(PROBLEMS_PATH, newSubject);
     fs.mkdirSync(newTypeDirPath);
     fs.writeFileSync(path.resolve(newTypeDirPath, 'index.ts'), '');
     const rootIndexTsPath = path.resolve(PROBLEMS_PATH, 'index.ts');
@@ -62,12 +62,12 @@ async function main() {
     fs.writeFileSync(
       rootIndexTsPath,
       `${rootIndexTs}export * as ${handleStringWithDivider(
-        newTypeName,
-      )} from './${newTypeName}';\n`,
+        newSubject,
+      )} from './${newSubject}';\n`,
     );
-    problemType = newTypeName;
+    subject = newSubject;
   }
-  const problemDirPath = path.resolve(PROBLEMS_PATH, problemType);
+  const problemDirPath = path.resolve(PROBLEMS_PATH, subject);
   const problemsFiles = fs.readdirSync(problemDirPath);
   const problemNumber =
     problemsFiles.filter(function (item) {
@@ -85,10 +85,18 @@ async function main() {
         ? 'This problem already exists!'
         : Boolean(value),
   });
+  const { newProblemKey } = await prompts({
+    type: 'text',
+    name: 'newProblemKey',
+    message: 'What is the special key of the new problem?',
+    validate: value =>
+      !value && !problemJson.some(problem => problem.key === value),
+  });
   const { githubName } = await prompts({
     type: 'text',
     name: 'githubName',
     message: 'Your github name to thanks:',
+    hint: 'Empty to hide this info in the page.',
   });
   const newProblemPath = path.resolve(
     problemDirPath,
@@ -97,15 +105,14 @@ async function main() {
   fs.cpSync(HELLO_WORLD_PATH, newProblemPath, { recursive: true });
   const indexTsPath = path.resolve(problemDirPath, 'index.ts');
   const indexTs = fs.readFileSync(indexTsPath);
-  const key = handleStringWithDivider(newProblemName);
   fs.writeFileSync(
     indexTsPath,
-    `${indexTs}export * as ${key} from './${problemNumber}-${newProblemName}';\n`,
+    `${indexTs}export * as ${newProblemKey} from './${problemNumber}-${newProblemName}';\n`,
   );
   problemJson.push({
-    key,
-    subject: handleStringWithDivider(problemType, ' '),
-    subjectKey: handleStringWithDivider(problemType),
+    key: newProblemKey,
+    subject: handleStringWithDivider(subject, ' '),
+    subjectKey: handleStringWithDivider(subject),
     title: handleStringWithDivider(newProblemName, ' '),
     author: githubName,
   });
@@ -118,7 +125,7 @@ async function main() {
   );
   console.log(
     `The new problem ${chalk.underline.green(
-      `${problemType}:${newProblemName}`,
+      `${subject}:${newProblemName}`,
     )} has been created at ${chalk.underline.blue(
       `problems/${problemNumber}-${newProblemName}`,
     )}.`,
