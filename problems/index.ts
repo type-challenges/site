@@ -23,4 +23,3 @@ export * as Difficulties from './difficulties';
 //
 // const a: MyNumber<Exclude<Enumerate<10>, 0>, 10> = '10';
 // const b: ArrayOfDefinedLength<5> = [0, 1, 2, 3, 4];
-export * as undefined from './template-type';
