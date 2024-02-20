@@ -1,1 +1,1 @@
-export * as TransposeMatrix from './transpose-matrix';
+export * as TransposeMatrix from './1-transpose-matrix';

@@ -4,6 +4,9 @@
     "node": true,
     "browser": true
   },
+  "globals": {
+    "WEBPACK_IS_SSR": true
+  },
   "plugins": [
     "react",
     "import",

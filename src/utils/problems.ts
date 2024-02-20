@@ -5,17 +5,14 @@ import problemsJson from '@config/problems.json';
 import i18nJson from '@config/i18n.json';
 import localCache from '@src/utils/local-cache';
 import { Setting } from '@src/utils/setting';
-import typeAssertions from '../../node_modules/type-assertions/lib/index.d.ts?raw';
+import typeAssertions from '@problems/type-assertions';
 
 export type Problem = {
   key: string;
   subject: string;
   subjectKey: string;
   title: string;
-  contributor?: {
-    name: string;
-    link: string;
-  };
+  author?: string;
   keywords?: string[];
   cases?: {
     source: string;
@@ -121,7 +118,7 @@ export function formatCodeByUpdateTabSize(
     .join('\n');
 }
 
-export async function getProblemRaw(problem: Problem): Promise<ProblemRaw> {
+export async function getProblemRaw(problem: Problem) {
   const raw: ProblemRaw = { ...DEFAULT_RAW };
   const { subjectKey, key } = problem;
   await Promise.all(
@@ -167,13 +164,11 @@ export async function getProblemDocs(
   return await Get<string>(url, '');
 }
 
-export async function getProblemTestRaw(
-  problem: Problem,
-): Promise<string | undefined> {
+export async function getProblemTestRaw(problem: Problem) {
   const { subjectKey, key } = problem;
   const url =
     problemsUrl[subjectKey][key]['test'] ||
     problemsUrl[subjectKey][key]['check'];
-  const data = await Get<string>(url, undefined as unknown as string);
+  const data = await Get<string | undefined>(url, undefined);
   return data?.replace(/\n\/\/ @ts-ignore/g, '').trim();
 }

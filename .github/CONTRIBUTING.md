@@ -49,6 +49,8 @@ Please follow the commit specification. See [`.commitlintrc.json`](https://githu
 ### Commonly used NPM scripts
 
 ```bash
+# add new problem
+$ yarn new
 # run project in development mode
 $ yarn dev
 # build all dist files
