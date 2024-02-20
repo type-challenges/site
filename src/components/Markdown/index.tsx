@@ -21,6 +21,7 @@ const Markdown = function (props: {
   const { content, theme } = props;
   return (
     <ReactMarkdown
+      className={styles['markdown-wrapper']}
       remarkPlugins={[remarkMath]}
       rehypePlugins={[rehypeKatex]}
       components={{
