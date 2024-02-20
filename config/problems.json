@@ -37,40 +37,5 @@
         "target": "[[1, 3, 5], [2, 4, 6]]"
       }
     ]
-  },
-  {
-    "key": "one",
-    "subject": "Origin",
-    "subjectKey": "Origin",
-    "title": "1",
-    "author": "mdevils"
-  },
-  {
-    "subject": "Basic Tutorial",
-    "subjectKey": "BasicTutorial",
-    "title": "Template Problem",
-    "key": "aaaa",
-    "author": ""
-  },
-  {
-    "subject": "Basic Tutorial",
-    "subjectKey": "BasicTutorial",
-    "title": "Template Problem2",
-    "key": "aaa",
-    "author": ""
-  },
-  {
-    "subject": "Difficulties",
-    "subjectKey": "Difficulties",
-    "title": "Template Problem",
-    "key": "aaaaaa",
-    "author": ""
-  },
-  {
-    "subject": "Template Type",
-    "subjectKey": "TemplateType",
-    "title": "Template Problem",
-    "key": "a",
-    "author": ""
   }
 ]

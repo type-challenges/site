@@ -48,11 +48,11 @@ class AddProblemProcess {
         subjects.push(dir);
       }
     });
-    const typesChoices: prompts.Choice[] = subjects.map(subject => ({
+    const subjectChoices: prompts.Choice[] = subjects.map(subject => ({
       title: handleStringWithDivider(subject, ' '),
       value: subject,
     }));
-    typesChoices.push({
+    subjectChoices.push({
       title: AddProblemProcess.NEW_TYPE_TAG,
       value: AddProblemProcess.NEW_TYPE_TAG,
       description: 'Add a new problem type',
@@ -61,7 +61,7 @@ class AddProblemProcess {
       type: 'select',
       name: 'subject',
       message: 'What is the subject of problem do you want to create?',
-      choices: typesChoices,
+      choices: subjectChoices,
     });
     if (subject !== AddProblemProcess.NEW_TYPE_TAG) {
       this.config.subject = handleStringWithDivider(subject, ' ');
@@ -182,8 +182,8 @@ class AddProblemProcess {
     const { key } = this.config;
     const { subjectDirName, problemDirName } = this.info;
     const subjectDirPath = path.resolve(PROBLEMS_PATH, subjectDirName!);
-    const newProblemPath = path.resolve(subjectDirPath!, problemDirName!);
-    fs.cpSync(HELLO_WORLD_PATH, newProblemPath, { recursive: true });
+    const problemDirPath = path.resolve(subjectDirPath!, problemDirName!);
+    fs.cpSync(HELLO_WORLD_PATH, problemDirPath, { recursive: true });
     const indexTsPath = path.resolve(subjectDirPath!, 'index.ts');
     const indexTs = fs.readFileSync(indexTsPath);
     fs.writeFileSync(
@@ -203,7 +203,7 @@ class AddProblemProcess {
   }
   private checkConfigValue(key: keyof typeof this.config) {
     if (this.config[key] === undefined) {
-      console.error(chalk.red(`${key} doesn't exist`));
+      console.error(chalk.red(`[error] ${key} doesn't exist.`));
       process.exit(1);
     }
     return true;
@@ -246,9 +246,8 @@ class AddProblemProcess {
   }
 }
 
-function main() {
-  const progress = new AddProblemProcess();
-  progress.run();
+async function main() {
+  await new AddProblemProcess().run();
 }
 
 main();
