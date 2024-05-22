@@ -34,7 +34,6 @@
     "*.less"
   ],
   "dependencies": {
-    "@arco-design/theme-line": "^0.0.3",
     "@arco-design/web-react": "^2.53.2",
     "@monaco-editor/react": "^4.6.0",
     "axios": "^1.5.1",
@@ -49,12 +48,13 @@
     "rehype-katex": "^6.0.3",
     "remark-math": "^6.0.0",
     "styled-components": "^6.1.0",
+    "ts-deepmerge": "^7.0.0",
     "type-assertions": "^1.1.0"
   },
   "devDependencies": {
-    "@arco-plugins/unplugin-react": "^1.0.0-alpha.1",
-    "@rspack/cli": "^0.3.5",
-    "@rspack/plugin-html": "^0.3.11",
+    "@rspack/cli": "^0.6.5",
+    "@rspack/core": "^0.6.5",
+    "@rspack/plugin-html": "^0.5.8",
     "@svgr/webpack": "^8.1.0",
     "@types/event-emitter": "^0.3.4",
     "@types/lodash.debounce": "^4.0.7",
@@ -68,7 +68,6 @@
     "@typescript-eslint/parser": "^6.7.3",
     "browserslist": "^4.22.1",
     "commitlint": "^17.7.1",
-    "css-loader": "^6.8.1",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-alias": "^1.1.2",
@@ -85,7 +84,6 @@
     "monaco-editor": "^0.44.0",
     "prettier": "^3.0.3",
     "prompts": "^2.4.2",
-    "style-loader": "^3.3.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },

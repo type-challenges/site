@@ -1,13 +1,11 @@
 import type { Configuration } from '@rspack/cli';
 import { HtmlRspackPlugin, DefinePlugin } from '@rspack/core';
+import { merge as deepmerge } from 'ts-deepmerge';
 import createBaseRspackConfig from './rspack.base.config';
 
 export default function createSSRRspackConfig(): Configuration {
   const baseConfig = createBaseRspackConfig();
-  const mode = process.env.NODE_ENV as Configuration['mode'];
-  return {
-    ...baseConfig,
-    mode,
+  return deepmerge<[Configuration, Configuration]>(baseConfig, {
     target: 'node',
     entry: {
       ssr: './src/ssr.tsx',
@@ -28,5 +26,5 @@ export default function createSSRRspackConfig(): Configuration {
         WEBPACK_IS_SSR: true,
       }),
     ],
-  };
+  });
 }
