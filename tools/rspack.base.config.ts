@@ -1,9 +1,11 @@
 import path from 'path';
 import type { Configuration } from '@rspack/cli';
+import type { SwcLoaderOptions } from '@rspack/core';
 
 export default function createBaseRspackConfig(): Configuration {
+  const mode = process.env.NODE_ENV as Configuration['mode'];
   return {
-    context: path.resolve(__dirname, '..'),
+    mode,
     output: {
       path: './dist',
       filename: '[name].[contenthash:8].bundle.js',
@@ -12,19 +14,20 @@ export default function createBaseRspackConfig(): Configuration {
     },
     resolve: {
       alias: {
-        '@config': './config',
-        '@problems': './problems',
-        '@src': './src',
+        '@config': path.resolve(__dirname, '../config'),
+        '@problems': path.resolve(__dirname, '../problems'),
+        '@src': path.resolve(__dirname, '../src'),
       },
+      extensions: ['...', 'js', '.ts', 'jsx', '.tsx'],
     },
-    builtins: {
-      css: {
-        modules: {
-          localIdentName: '[path][name]__[local]--[hash:6]',
-        },
-      },
+    experiments: {
+      css: true,
     },
     module: {
+      parser: {
+        css: { namedExports: false },
+        'css/module': { namedExports: false },
+      },
       rules: [
         {
           resourceQuery: /url$/,
@@ -33,6 +36,11 @@ export default function createBaseRspackConfig(): Configuration {
         {
           resourceQuery: /raw$/,
           type: 'asset/source',
+        },
+        {
+          test: /\.svg$/,
+          issuer: /\.[jt]sx?$/,
+          use: ['@svgr/webpack'],
         },
         {
           test: /\.less$/i,
@@ -63,9 +71,35 @@ export default function createBaseRspackConfig(): Configuration {
           type: 'css/module',
         },
         {
-          test: /\.svg$/,
-          issuer: /\.[jt]sx?$/,
-          use: ['@svgr/webpack'],
+          test: /\.(jsx?|tsx?)$/,
+          exclude: [/problems\//],
+          use: [
+            {
+              loader: 'builtin:swc-loader',
+              options: {
+                jsc: {
+                  parser: {
+                    syntax: 'typescript',
+                    tsx: true,
+                  },
+                  transform: {
+                    react: {
+                      runtime: 'automatic',
+                    },
+                  },
+                },
+                rspackExperiments: {
+                  import: [
+                    {
+                      libraryName: '@arco-design/web-react',
+                      customName: '@arco-design/web-react/es/{{ member }}',
+                      style: true,
+                    },
+                  ],
+                },
+              } as SwcLoaderOptions,
+            },
+          ],
         },
       ],
     },
