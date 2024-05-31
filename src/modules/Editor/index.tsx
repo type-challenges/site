@@ -3,25 +3,24 @@ import { IconCode, IconUndo } from '@arco-design/web-react/icon';
 import debounce from 'lodash.debounce';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import Context from '@src/utils/context';
-import {
-  DEFAULT_RAW,
-  getProblemRaw,
-  Problem,
-  ProblemFiles,
-} from '@src/utils/problems';
 import localCache from '@src/utils/local-cache';
 import i18nJson from '@config/i18n.json';
-import MonacoEditor from './monaco-editor';
+import {
+  DEFAULT_RAW,
+  getQuestionRaw,
+  QuestionFiles,
+} from '@src/utils/type-challenges';
+import MonacoEditor from './MonacoEditor';
 import styles from './index.module.less';
 
 function Editor() {
   const [raw, setRaw] = useState(DEFAULT_RAW);
   const [loading, setLoading] = useState(true);
-  const [{ setting, currentProblem }] = useContext(Context);
+  const [{ setting, currentQuestion }] = useContext(Context);
 
-  function onChange(filename: ProblemFiles, content: string) {
-    if (!raw || filename !== ProblemFiles.template) return;
-    localCache.setProblemCache(currentProblem.key, {
+  function onChange(filename: QuestionFiles, content: string) {
+    if (!raw || filename !== QuestionFiles.template) return;
+    localCache.setQuestionCache(currentQuestion, {
       lastUpdated: content,
     });
     setRaw({
@@ -34,8 +33,8 @@ function Editor() {
   }
 
   const updateRaw = useCallback(
-    debounce(async function (problem: Problem) {
-      const raw = await getProblemRaw(problem);
+    debounce(async function (question: string) {
+      const raw = await getQuestionRaw(question);
       setRaw(raw);
       setLoading(false);
     }, 500),
@@ -50,10 +49,10 @@ function Editor() {
       cancelText: i18nJson['cancel_btn'][setting.language],
       onOk: async function () {
         setLoading(true);
-        localCache.setProblemCache(currentProblem.key, {
+        localCache.setQuestionCache(currentQuestion, {
           lastUpdated: null,
         });
-        await updateRaw(currentProblem);
+        await updateRaw(currentQuestion);
         modal.close();
       },
     });
@@ -62,9 +61,9 @@ function Editor() {
   useEffect(
     function () {
       setLoading(true);
-      updateRaw(currentProblem);
+      updateRaw(currentQuestion);
     },
-    [currentProblem],
+    [currentQuestion],
   );
 
   return (
@@ -88,8 +87,8 @@ function Editor() {
       >
         <div className={styles['monaco-wrapper']}>
           <MonacoEditor
-            namespace={currentProblem.key}
-            selectedFilename={ProblemFiles.template}
+            namespace={currentQuestion}
+            selectedFilename={QuestionFiles.template}
             raw={raw}
             onChange={onChange}
             setting={setting}

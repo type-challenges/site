@@ -1,6 +1,6 @@
 import type { Configuration } from '@rspack/cli';
 import HtmlRspackPlugin from '@rspack/plugin-html';
-import { CopyRspackPlugin, DefinePlugin } from '@rspack/core';
+import { DefinePlugin } from '@rspack/core';
 import { merge as deepmerge } from 'ts-deepmerge';
 import RspackSSRPlugin from './RspackSSRPlugin';
 import createBaseRspackConfig from './rspack.base.config';
@@ -21,7 +21,7 @@ export default function createRspackConfig(): Configuration {
     plugins: [
       new RspackSSRPlugin({
         template,
-        token: '{% ROOT_CONTENT %}',
+        id: 'root',
       }),
       new HtmlRspackPlugin({
         template,
@@ -30,15 +30,6 @@ export default function createRspackConfig(): Configuration {
         inject: 'body',
         scriptLoading: 'defer',
         favicon: './assets/favicon.png',
-      }),
-      new CopyRspackPlugin({
-        patterns: [
-          {
-            from: './assets/monaco-editor',
-            to: './assets/monaco-editor',
-            force: true,
-          },
-        ],
       }),
       new DefinePlugin({
         WEBPACK_IS_SSR: false,

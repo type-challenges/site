@@ -47,10 +47,6 @@
           [
             "@src",
             "./src"
-          ],
-          [
-            "@problems",
-            "./problems"
           ]
         ]
       },

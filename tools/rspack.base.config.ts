@@ -15,7 +15,6 @@ export default function createBaseRspackConfig(): Configuration {
     resolve: {
       alias: {
         '@config': path.resolve(__dirname, '../config'),
-        '@problems': path.resolve(__dirname, '../problems'),
         '@src': path.resolve(__dirname, '../src'),
       },
       extensions: ['...', 'js', '.ts', 'jsx', '.tsx'],
@@ -27,6 +26,11 @@ export default function createBaseRspackConfig(): Configuration {
       parser: {
         css: { namedExports: false },
         'css/module': { namedExports: false },
+      },
+      generator: {
+        'css/module': {
+          localIdentName: '[local]-[hash]',
+        },
       },
       rules: [
         {
@@ -72,7 +76,7 @@ export default function createBaseRspackConfig(): Configuration {
         },
         {
           test: /\.(jsx?|tsx?)$/,
-          exclude: [/problems\//],
+          exclude: [/node_modules\/@type-challenges\/utils\/index\.d\.ts/],
           use: [
             {
               loader: 'builtin:swc-loader',

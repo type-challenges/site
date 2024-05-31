@@ -1,49 +1,33 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Skeleton } from '@arco-design/web-react';
 import debounce from 'lodash.debounce';
 import Markdown from '@src/components/Markdown';
 import Context from '@src/utils/context';
-import {
-  getProblemDocs,
-  NULL_CASE,
-  Problem,
-  ProblemDocs,
-} from '@src/utils/problems';
-import localCache from '@src/utils/local-cache';
-import SubmitStatus from '@src/components/SubmitStatus';
-import emitter from '@src/utils/emit';
-import i18nJson from '@config/i18n.json';
 import { Setting } from '@src/utils/setting';
+import createOrGetTypeChallenges, {
+  QuestionInfo,
+} from '@src/utils/type-challenges';
 import styles from './index.module.less';
 
 const Description = function () {
   const [
     {
-      currentProblem,
+      currentQuestion,
       setting: { theme, language },
     },
   ] = useContext(Context);
-  const { key, title, author, cases = [NULL_CASE] } = currentProblem;
+  const [info, setInfo] = useState<QuestionInfo>({});
   const [desc, setDesc] = useState('');
-  const [state, setState] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const status = useMemo(
-    function () {
-      const cacheJson = localCache.getProblemCacheJson();
-      const cache = cacheJson[key];
-      return cache?.status;
-    },
-    [currentProblem, state],
-  );
+  const { author } = info;
 
   const updateData = useCallback(
-    debounce(async function (problem: Problem, language?: Setting['language']) {
-      const desc = await getProblemDocs(
-        problem,
-        ProblemDocs.description,
-        language,
-      );
+    debounce(async function (question: string, language?: Setting['language']) {
+      const tc = createOrGetTypeChallenges(question);
+      const info = await tc.getInfo();
+      const desc = await tc.getReadme({ language });
+      setInfo(info);
       setDesc(desc);
       setLoading(false);
     }, 500),
@@ -53,25 +37,14 @@ const Description = function () {
   useEffect(
     function () {
       setLoading(true);
-      updateData(currentProblem, language);
+      updateData(currentQuestion, language);
     },
-    [currentProblem, language],
+    [currentQuestion, language],
   );
-
-  useEffect(function () {
-    emitter.on('submitCode', () => setState(prev => !prev));
-  }, []);
 
   return (
     <div className={styles['desc-container']}>
       <div className={styles['desc-container-inner']}>
-        <div className={styles['desc-header']}>
-          <div className={styles['desc-title']}>
-            <span>{title}</span>
-            <SubmitStatus status={status} />
-          </div>
-        </div>
-        <div className={styles['desc-keywords']}></div>
         <Skeleton
           className={styles['desc-skeleton']}
           loading={loading}
@@ -81,32 +54,17 @@ const Description = function () {
           <div className={styles['desc-content']}>
             <Markdown content={desc} theme={theme} />
           </div>
-          <div className={styles['desc-cases']}>
-            {cases.map(function ({ source, target }, index) {
-              return (
-                <div key={index} className={styles['desc-case']}>
-                  <div className={styles['desc-case-title']}>
-                    {`${i18nJson['case'][language]} ${index + 1}:`}
-                  </div>
-                  <blockquote className={styles['desc-case-content']}>
-                    <p>Source: {source}</p>
-                    <p>Target: {target}</p>
-                  </blockquote>
-                </div>
-              );
-            })}
-          </div>
         </Skeleton>
       </div>
-      {author && (
+      {author?.name && (
         <div className={styles['desc-footer']}>
           <a
-            href={`https://github.com/${author}`}
+            href={author.github}
             target={'_blank'}
             rel="noreferrer"
             className={styles['desc-contributor']}
           >
-            Provided By @{author}
+            Provided By @{author.name}
           </a>
         </div>
       )}
