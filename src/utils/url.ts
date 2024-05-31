@@ -1,16 +1,20 @@
 const enum URL_SEARCH_PARAMS_KEY {
-  problem = 'problem',
+  question = 'question',
 }
 
-export function getCurrentProblemFromUrl() {
+export function getCurrentQuestionFromUrl() {
   if (WEBPACK_IS_SSR) return undefined;
   const url = new URL(window.location.href);
-  return url.searchParams.get(URL_SEARCH_PARAMS_KEY.problem);
+  return url.searchParams.get(URL_SEARCH_PARAMS_KEY.question);
 }
 
-export function setCurrentProblemForUrl(key: string) {
+export function setCurrentQuestionForUrl(question: string) {
   if (WEBPACK_IS_SSR) return;
+  const urlCurrentQuestion = getCurrentQuestionFromUrl();
+  if (urlCurrentQuestion === question) {
+    return;
+  }
   const url = new URL(window.location.href);
-  url.searchParams.set(URL_SEARCH_PARAMS_KEY.problem, key);
+  url.searchParams.set(URL_SEARCH_PARAMS_KEY.question, question);
   window.history.pushState({}, '', url);
 }

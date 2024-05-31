@@ -4,7 +4,7 @@ export type Setting = {
   theme: 'light' | 'dark';
   fontSize: number;
   tabSize: 2 | 4;
-  language: 'en' | 'zhCN';
+  language: 'en' | 'zh-CN';
 };
 
 const settingList: {
@@ -73,12 +73,12 @@ const settingList: {
       },
       {
         text: '简体中文',
-        value: 'zhCN',
+        value: 'zh-CN',
       },
     ],
     onChange(lang) {
       let langTag: string = lang;
-      if (lang === 'zhCN') {
+      if (lang === 'zh-CN') {
         langTag = 'zh-cmn-Hans';
       }
       document.documentElement.setAttribute('lang', langTag);

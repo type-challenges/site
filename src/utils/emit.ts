@@ -6,6 +6,7 @@ const emitter = ee<{
   tabSizeChange: (prev: Setting['tabSize'], next: Setting['tabSize']) => void;
   monacoEditorLoaded: () => void;
   deleteProblemRecord: () => void;
+  validate: () => void;
 }>();
 
 export default emitter;

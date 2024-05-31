@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { RspackPluginInstance, Compiler } from '@rspack/core';
 
 type RspackSSRPluginOptions = {
-  token: string;
+  id: string;
   template: string;
 };
 
@@ -57,7 +57,7 @@ class RspackSSRPlugin implements RspackPluginInstance {
     });
   }
   replaceTemplateFile(compiler: Compiler) {
-    const token = this.options.token;
+    const id = this.options.id;
     const context = compiler.context;
     const templateContent = this.templateContent;
     const ssrFilePath = path.resolve(context, './dist/ssr/ssr.bundle.js');
@@ -65,7 +65,10 @@ class RspackSSRPlugin implements RspackPluginInstance {
     const getSSRContent = require(ssrFilePath).default;
     delete require.cache[require.resolve(ssrFilePath)];
     const ssrContent = getSSRContent();
-    const newTemplateContent = templateContent.replace(token, ssrContent);
+    const newTemplateContent = templateContent.replace(
+      new RegExp(`<div id="${id}"><\\/div>`),
+      `<div id="${id}">${ssrContent}</div>`,
+    );
     writeFileSync(
       path.resolve(context, './html/index.html'),
       newTemplateContent,
