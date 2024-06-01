@@ -18,6 +18,10 @@ import { getQuestionList } from '@src/utils/type-challenges';
 import styles from './index.module.less';
 import './global.less';
 
+function getPopupContainer() {
+  return document.getElementById('root') || document.body;
+}
+
 function App() {
   const [context, setContext] = useState(getContext());
 
@@ -63,7 +67,11 @@ function App() {
 
   return (
     <ConfigProvider
-      getPopupContainer={() => document.getElementById('root') || document.body}
+      componentConfig={{
+        Modal: { getPopupContainer },
+        Drawer: { getPopupContainer },
+      }}
+      getPopupContainer={getPopupContainer}
     >
       <Context.Provider value={contextValue}>
         <Layout className={styles.container}>

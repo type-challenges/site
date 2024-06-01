@@ -17,6 +17,7 @@ function Editor() {
   const [raw, setRaw] = useState(DEFAULT_RAW);
   const [loading, setLoading] = useState(true);
   const [{ setting, currentQuestion }] = useContext(Context);
+  const { language } = setting;
 
   function onChange(filename: QuestionFiles, content: string) {
     if (!raw || filename !== QuestionFiles.template) return;
@@ -43,10 +44,10 @@ function Editor() {
 
   function resetCode() {
     const modal = Modal.confirm({
-      title: i18nJson['confirm_title'][setting.language],
-      content: i18nJson['confirm_reset_code'][setting.language],
-      okText: i18nJson['confirm_btn'][setting.language],
-      cancelText: i18nJson['cancel_btn'][setting.language],
+      title: i18nJson['confirm_title'][language],
+      content: i18nJson['confirm_reset_code'][language],
+      okText: i18nJson['confirm_btn'][language],
+      cancelText: i18nJson['cancel_btn'][language],
       onOk: async function () {
         setLoading(true);
         localCache.setQuestionCache(currentQuestion, {
@@ -70,9 +71,7 @@ function Editor() {
     <div className={styles.container}>
       <div className={styles.header}>
         <IconCode />
-        <span style={{ marginLeft: 5 }}>
-          {i18nJson['code'][setting.language]}
-        </span>
+        <span style={{ marginLeft: 5 }}>{i18nJson['code'][language]}</span>
         <a onClick={resetCode} className={styles.reset}>
           <Tooltip mini={true} content={'reset'}>
             <IconUndo />

@@ -12,7 +12,8 @@ const Header = function () {
   function go(step: 1 | -1) {
     const index = questions.indexOf(currentQuestion) || 0;
     setContext({
-      currentQuestion: questions[(index + step) % questions.length],
+      currentQuestion:
+        questions[(index + step + questions.length) % questions.length],
     });
   }
 

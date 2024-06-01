@@ -1,4 +1,4 @@
-import { Drawer, Input, Menu } from '@arco-design/web-react';
+import { Drawer, Empty, Input, Menu } from '@arco-design/web-react';
 import { IconMenuUnfold } from '@arco-design/web-react/icon';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import Context from '@src/utils/context';
@@ -14,6 +14,9 @@ const QuestionList = function () {
   const [searchKey, setSearchKey] = useState('');
   const [{ setting, questions, currentQuestion }, setContext] =
     useContext(Context);
+  const { language } = setting;
+
+  const cacheJson = useMemo(localCache.getQuestionCacheJson, [state]);
 
   const questionsTree = useMemo(
     function () {
@@ -34,7 +37,12 @@ const QuestionList = function () {
     [questions, searchKey],
   );
 
-  const cacheJson = useMemo(localCache.getQuestionCacheJson, [state]);
+  const menuItems = useMemo(
+    function () {
+      return Object.keys(questionsTree).map(createSubMenu);
+    },
+    [questionsTree, state],
+  );
 
   function createMenuItem(question: string) {
     const status = cacheJson[question]?.status;
@@ -55,14 +63,23 @@ const QuestionList = function () {
   function createSubMenu(subject: string) {
     const problems = questionsTree[subject];
     return (
-      <Menu.SubMenu key={subject} title={subject}>
+      <Menu.SubMenu
+        key={subject}
+        title={<div style={{ fontWeight: 600 }}>{subject}</div>}
+      >
         {problems?.map(createMenuItem)}
       </Menu.SubMenu>
     );
   }
 
   useEffect(function () {
-    emitter.on('submitCode', () => setState(prev => !prev));
+    function update() {
+      setState(prev => !prev);
+    }
+    emitter.on('submitCode', update);
+    return function () {
+      emitter.off('submitCode', update);
+    };
   }, []);
 
   return (
@@ -78,20 +95,29 @@ const QuestionList = function () {
         title={
           <div className={styles['drawer-header']}>
             <div className={styles['drawer-header-text']}>
-              {i18nJson['question_list'][setting.language]}
+              {i18nJson['question_list'][language]}
             </div>
             <Input.Search
-              className={styles['drawer-header-search']}
               value={searchKey}
-              placeholder={i18nJson['type_to_search'][setting.language]}
+              className={styles['drawer-header-search']}
+              placeholder={i18nJson['type_to_search'][language]}
               onChange={key => setSearchKey(key.toLowerCase())}
             />
           </div>
         }
         onCancel={() => setVisible(false)}
       >
-        <Menu selectedKeys={[currentQuestion]} autoOpen={true}>
-          {Object.keys(questionsTree).map(createSubMenu)}
+        <Menu
+          autoOpen={true}
+          selectedKeys={[currentQuestion]}
+          className={styles['drawer-menu']}
+          style={menuItems.length > 0 ? undefined : {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {menuItems.length > 0 ? menuItems : <Empty description={i18nJson['no_question'][language]} />}
         </Menu>
       </Drawer>
     </>
