@@ -195,9 +195,7 @@ export async function getQuestionRaw(question: string): Promise<QuestionRaw> {
   const cache = localCache.getQuestionCacheJson();
   const { lastUpdated } = cache[question] || {};
   return deepmerge(DEFAULT_RAW, {
-    [QuestionFiles.check]: {
-      content: testCases.replace(/(\/\/).*@ts-expect-error\s+/g, ''),
-    },
+    [QuestionFiles.check]: { content: testCases },
     [QuestionFiles.template]: { content: lastUpdated ?? template },
   });
 }
