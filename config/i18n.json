@@ -1,138 +1,62 @@
 {
   "code": {
     "en": "Code",
-    "zhCN": "代码"
+    "zh-CN": "代码"
   },
-  "problem_list": {
-    "en": "Problem List",
-    "zhCN": "题目列表"
+  "question_list": {
+    "en": "Question List",
+    "zh-CN": "题目列表"
   },
   "type_to_search": {
     "en": "Type to search...",
-    "zhCN": "请输入关键词搜索"
+    "zh-CN": "请输入关键词搜索"
   },
   "setting": {
     "en": "setting",
-    "zhCN": "设置"
-  },
-  "case": {
-    "en": "Case",
-    "zhCN": "示例"
-  },
-  "no_data": {
-    "en": "No data",
-    "zhCN": "暂无数据"
-  },
-  "please_run_or_submit_first": {
-    "en": "Please run or submit your code first",
-    "zhCN": "请先运行或提交您的代码"
-  },
-  "run_code": {
-    "en": "Run",
-    "zhCN": "运行示例"
-  },
-  "submit_code": {
-    "en": "Submit",
-    "zhCN": "提交"
+    "zh-CN": "设置"
   },
   "description": {
     "en": "Description",
-    "zhCN": "题目描述"
+    "zh-CN": "题目描述"
   },
-  "records": {
-    "en": "Records",
-    "zhCN": "提交记录"
-  },
-  "tutorial": {
-    "en": "tutorial",
-    "zhCN": "题解"
+  "solution": {
+    "en": "Solution",
+    "zh-CN": "解答"
   },
   "theme": {
     "en": "theme",
-    "zhCN": "主题"
+    "zh-CN": "主题"
   },
   "font_size": {
     "en": "font size",
-    "zhCN": "字体大小"
+    "zh-CN": "字体大小"
   },
   "tab_size": {
     "en": "tab size",
-    "zhCN": "缩进大小"
+    "zh-CN": "缩进大小"
   },
   "language": {
     "en": "language",
-    "zhCN": "语言"
-  },
-  "cases": {
-    "en": "Cases",
-    "zhCN": "测试用例"
-  },
-  "result": {
-    "en": "Result",
-    "zhCN": "运行结果"
-  },
-  "status": {
-    "en": "Status",
-    "zhCN": "状态"
-  },
-  "time": {
-    "en": "Time",
-    "zhCN": "提交时间"
-  },
-  "options": {
-    "en": "Options",
-    "zhCN": "选项"
-  },
-  "operate": {
-    "en": "Operate",
-    "zhCN": "操作"
-  },
-  "view": {
-    "en": "view",
-    "zhCN": "查看"
-  },
-  "copy": {
-    "en": "copy",
-    "zhCN": "复制"
-  },
-  "successfully_delete": {
-    "en": "Successfully deleted",
-    "zhCN": "删除成功"
-  },
-  "failed_delete": {
-    "en": "Failed to delete, please refresh page to retry",
-    "zhCN": "删除失败，请刷新重试"
-  },
-  "record_tip": {
-    "en": "In order to save memory, we only save the latest 8 records. You can choose to manually delete some useless data to break this limit.",
-    "zhCN": "为了节省内存，我们仅保存最新的 8 条记录，您可以在达到限制后手动删除一些数据"
-  },
-  "copied": {
-    "en": "Copied",
-    "zhCN": "复制成功"
-  },
-  "request_error": {
-    "en": "Network error, please check your network or refresh the page",
-    "zhCN": "网络请求失败，请检查网络状况后刷新重试"
+    "zh-CN": "语言"
   },
   "confirm_title": {
     "en": "Confirm",
-    "zhCN": "确认"
+    "zh-CN": "确认"
   },
   "confirm_btn": {
     "en": "confirm",
-    "zhCN": "确认"
+    "zh-CN": "确认"
   },
   "cancel_btn": {
     "en": "cancel",
-    "zhCN": "取消"
+    "zh-CN": "取消"
   },
   "confirm_reset_code": {
     "en": "Are you sure to reset code?",
-    "zhCN": "确认重置代码？"
+    "zh-CN": "确认重置代码？"
   },
-  "confirm_reset_cases": {
-    "en": "Are you sure to reset cases?",
-    "zhCN": "确认重置示例？"
+  "no_question": {
+    "en": "No Result",
+    "zh-CN": "暂无数据"
   }
 }

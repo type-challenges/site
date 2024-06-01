@@ -1,30 +1,21 @@
 import debounce from 'lodash.debounce';
 import { Setting } from '@src/utils/setting';
 
-export const enum PROBLEM_STATUS {
+export const enum QUESTION_STATUS {
   unAccepted,
   accepted,
 }
 
-export type ProblemRecord = {
-  time: number;
-  code: string;
-  status: PROBLEM_STATUS;
-};
-
-export type ProblemCache = {
-  records?: ProblemRecord[];
-  status?: PROBLEM_STATUS;
+export type QuestionsCache = {
+  status?: QUESTION_STATUS;
   lastUpdated?: string | null;
 };
 
-export type ProblemsCacheJson = {
-  [key: string]: ProblemCache | undefined;
+export type QuestionsCacheJson = {
+  [key: string]: QuestionsCache | undefined;
 } & {
-  currentProblem?: string;
+  currentQuestion?: string;
 };
-
-const RECORD_MAX_LENGTH = 8;
 
 export const DEFAULT_SETTING: Setting = {
   theme: 'light',
@@ -34,83 +25,55 @@ export const DEFAULT_SETTING: Setting = {
 };
 
 const localCache = {
-  __PROBLEM_CACHE_KEY__: '__problem_cache__',
+  __QUESTION_CACHE_KEY__: '__question_cache__',
   __SETTING_CACHE_KEY__: '__setting_cache__',
-  getProblemCacheJson(): Partial<ProblemsCacheJson> {
-    let json: ProblemsCacheJson = {};
+  getQuestionCacheJson(): Partial<QuestionsCacheJson> {
+    let json: QuestionsCacheJson = {};
     if (WEBPACK_IS_SSR) return json;
-    const cache = localStorage.getItem(localCache.__PROBLEM_CACHE_KEY__);
+    const cache = localStorage.getItem(localCache.__QUESTION_CACHE_KEY__);
     if (!cache) return json;
     try {
       json = JSON.parse(cache);
     } catch {
-      localStorage.removeItem(localCache.__PROBLEM_CACHE_KEY__);
+      localStorage.removeItem(localCache.__QUESTION_CACHE_KEY__);
     }
     return json;
   },
-  setProblemCache<T extends keyof ProblemsCacheJson>(
+  setQuestionCache<T extends keyof QuestionsCacheJson>(
     key: T,
-    cache: T extends 'currentProblem' ? string : ProblemCache,
+    cache: T extends 'currentQuestion' ? string : QuestionsCache,
   ) {
-    const cacheJson = localCache.getProblemCacheJson();
+    const cacheJson = localCache.getQuestionCacheJson();
     let newCache;
-    if (key === 'currentProblem') {
+    if (key === 'currentQuestion') {
       newCache = cache;
     } else {
-      const { records = [], status, lastUpdated } = cache;
-      const {
-        records: oldRecords = [],
-        status: oldStatus,
-        lastUpdated: oldLastUpdated,
-      } = cacheJson[key] || { records: [], lastUpdated: undefined };
-      const newRecords = oldRecords;
-      newRecords.splice(
-        0,
-        records.length + oldRecords.length - RECORD_MAX_LENGTH,
-      );
-      newRecords.push(
-        ...records.map(record => ({ ...record, code: record.code.trim() })),
-      );
-      let newStatus: PROBLEM_STATUS | undefined = oldStatus;
+      const { status, lastUpdated } = cache;
+      const { status: oldStatus, lastUpdated: oldLastUpdated } = cacheJson[
+        key
+      ] || { lastUpdated: undefined };
+      let newStatus: QUESTION_STATUS | undefined = oldStatus;
       if (oldStatus === undefined) {
         newStatus = status;
-      } else if (oldStatus === PROBLEM_STATUS.accepted) {
+      } else if (oldStatus === QUESTION_STATUS.accepted) {
         newStatus = oldStatus;
-      } else if (status === PROBLEM_STATUS.accepted) {
+      } else if (status === QUESTION_STATUS.accepted) {
         newStatus = status;
       }
       const newLastUpdated =
         lastUpdated === null ? undefined : lastUpdated ?? oldLastUpdated ?? '';
       newCache = {
-        records: newRecords,
         status: newStatus,
         lastUpdated: newLastUpdated,
       };
     }
     localStorage.setItem(
-      localCache.__PROBLEM_CACHE_KEY__,
+      localCache.__QUESTION_CACHE_KEY__,
       JSON.stringify({
         ...cacheJson,
         [key]: newCache,
       }),
     );
-  },
-  deleteProblemRecord(key: string, time: number) {
-    const cacheJson = localCache.getProblemCacheJson();
-    const cache = cacheJson[key];
-    const records = cache?.records?.filter(record => record.time !== time);
-    if (records?.length === cache?.records?.length) return false;
-    localStorage.setItem(
-      localCache.__PROBLEM_CACHE_KEY__,
-      JSON.stringify({
-        ...cacheJson,
-        [key]: {
-          ...cacheJson[key],
-          records,
-        },
-      }),
-    );
-    return true;
   },
   getSettingCache(): Setting {
     let json: Setting = {

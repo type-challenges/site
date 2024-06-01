@@ -7,6 +7,8 @@ import ts from 'react-syntax-highlighter/dist/esm/languages/prism/typescript';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
 import { Setting } from '@src/utils/setting';
 import styles from './index.module.less';
 import 'katex/dist/katex.min.css';
@@ -22,20 +24,20 @@ const Markdown = function (props: {
   return (
     <ReactMarkdown
       className={styles['markdown-wrapper']}
-      remarkPlugins={[remarkMath]}
-      rehypePlugins={[rehypeKatex]}
+      remarkPlugins={[remarkMath, remarkGfm]}
+      rehypePlugins={[rehypeKatex, rehypeRaw as any]}
       components={{
         code(props) {
           const { children, className, inline, node, ...rest } = props;
           const match = /language-(typescript|ts)/.exec(className || '');
-          return match ? (
+          return !inline ? (
             <SyntaxHighlighter
               {...rest}
               node={node}
               inline={inline}
               className={styles['markdown-code']}
               style={theme === 'light' ? oneLight : oneDark}
-              language={match[1]}
+              language={match?.[1]}
               showLineNumbers={true}
               wrapLines={true}
             >

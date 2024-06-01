@@ -9,6 +9,8 @@
 
 Please go to [typescript-tutorial-exercises.github.io](https://typescript-tutorial-exercises.github.io/) to start your TypeScript travel!
 
+All exercises are from [type-challenges](https://github.com/type-challenges/type-challenges).
+
 ## Contribution
 
 Feel free to dive in! Open an issue or submit PRs. It may be helpful to read the [Contributor Guide](./.github/CONTRIBUTING.md).
@@ -26,6 +28,7 @@ This project is free and open-source software licensed under the [MIT License](.
 
 This project partially copies code from the following projects, their licenses are listed in [Third-party library licenses](./THIRD-PARTY-LICENSE).
 
-| Project       | License       |
-| ------------- | ------------- |
-| [typescript-exercises/typescript-exercises](https://github.com/typescript-exercises/typescript-exercises) | [MIT](https://github.com/typescript-exercises/typescript-exercises/blob/main/LICENSE)  |
+|                                                  Project                                                   |                                        License                                         |
+|:----------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|
+| [type-challenges](https://github.com/type-challenges/type-challenges)  | [MIT](https://github.com/type-challenges/type-challenges/blob/main/LICENSE)  |
+| [typescript-exercises/typescript-exercises](https://github.com/typescript-exercises/typescript-exercises)  | [MIT](https://github.com/typescript-exercises/typescript-exercises/blob/main/LICENSE)  |

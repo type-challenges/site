@@ -13,12 +13,23 @@ import settingList from '@src/utils/setting';
 import Question from '@src/modules/Question';
 import localCache from '@src/utils/local-cache';
 import Results from '@src/modules/Results';
-import { setCurrentProblemForUrl } from '@src/utils/url';
+import { setCurrentQuestionForUrl } from '@src/utils/url';
+import { getQuestionList } from '@src/utils/type-challenges';
 import styles from './index.module.less';
 import './global.less';
 
+function getPopupContainer() {
+  return document.getElementById('root') || document.body;
+}
+
 function App() {
   const [context, setContext] = useState(getContext());
+
+  useEffect(function () {
+    getQuestionList().then(questions =>
+      setContext(prev => ({ ...prev, questions })),
+    );
+  }, []);
 
   useEffect(function () {
     settingList['theme'].onChange?.(context.setting.theme);
@@ -27,7 +38,7 @@ function App() {
 
   const updateCache = useCallback(
     debounce(function (key: string) {
-      localCache.setProblemCache('currentProblem', key);
+      localCache.setQuestionCache('currentQuestion', key);
     }, 200),
     [],
   );
@@ -35,17 +46,17 @@ function App() {
   const contextValue: [ContextType, SetContext] = useMemo(
     function () {
       return [
-        context,
+        context!,
         update => {
           if (
-            update.currentProblem &&
-            context.currentProblem !== update.currentProblem
+            update.currentQuestion &&
+            context?.currentQuestion !== update.currentQuestion
           ) {
-            updateCache(update.currentProblem.key);
-            setCurrentProblemForUrl(update.currentProblem.key);
+            updateCache(update.currentQuestion);
+            setCurrentQuestionForUrl(update.currentQuestion);
           }
           setContext({
-            ...context,
+            ...context!,
             ...update,
           });
         },
@@ -56,7 +67,11 @@ function App() {
 
   return (
     <ConfigProvider
-      getPopupContainer={() => document.getElementById('root') || document.body}
+      componentConfig={{
+        Modal: { getPopupContainer },
+        Drawer: { getPopupContainer },
+      }}
+      getPopupContainer={getPopupContainer}
     >
       <Context.Provider value={contextValue}>
         <Layout className={styles.container}>

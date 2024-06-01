@@ -3,69 +3,31 @@
   height: 100%;
   :global {
     .arco-tabs-content {
-      width: 100%;
       height: calc(100% - 36px);
-      div {
-        height: 100%;
-        box-sizing: border-box;
-      }
     }
   }
-  .desc-container, .records-container, .tutorial-container {
+  .desc-container, .solution-container {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
   }
   .desc-container {
     position: relative;
-    div {
-      height: auto;
-    }
     .desc-container-inner {
       width: 100%;
       height: calc(100% - 32px);
-      padding: 16px 20px;
+      padding: 0 20px;
       box-sizing: border-box;
       overflow-y: auto;
       overflow-x: hidden;
-      .desc-header {
-        width: 100%;
-        display: flex;
-        align-items: flex-end;
-        margin-bottom: 16px;
-        .desc-title {
-          width: 100%;
-          font-size: 24px;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-      }
       .desc-skeleton {
         width: 100%;
+        padding: 16px 0;
         border-radius: 4px;
       }
       .desc-content {
         margin-bottom: 16px;
         font-size: 16px;
-      }
-      .desc-cases {
-        width: 100%;
-        .desc-case {
-          width: 100%;
-          &:not(:last-child) {
-            margin-bottom: 16px;
-          }
-          .desc-case-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 8px;
-          }
-          .desc-case-content {
-            font-family: Menlo, sans-serif;
-          }
-        }
       }
     }
     .desc-footer {
@@ -82,43 +44,9 @@
       background-color: var(--color-neutral-1);
     }
   }
-  .records-container {
-    div {
-      height: auto;
-    }
-    .records-table {
-      width: 100%;
-      margin-bottom: 16px;
-      .records-table-empty {
-        width: 100%;
-        height: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-    }
-    .record-tip {
-      width: 100%;
-      padding: 0 8px;
-      box-sizing: border-box;
-      text-align: center;
-      font-size: 16px;
-      color: var(--color-neutral-4);
-    }
-  }
-  .tutorial-container {
-    padding: 16px 20px;
-    box-sizing: border-box;
+  .solution-container {
+    padding: 0 20px;
     font-size: 16px;
     overflow: auto;
-    > pre {
-      margin: 0;
-      > div {
-        margin: 0 !important;
-      }
-    }
   }
 }

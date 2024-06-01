@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { RspackPluginInstance, Compiler } from '@rspack/core';
 
 type RspackSSRPluginOptions = {
-  token: string;
+  id: string;
   template: string;
 };
 
@@ -45,19 +45,17 @@ class RspackSSRPlugin implements RspackPluginInstance {
     ]);
     buildProcess.stdout.on('data', process.stdout.write);
     buildProcess.stderr.on('data', process.stderr.write);
-    buildProcess.on('error', function (e) {
-      throw e;
-    });
+    buildProcess.on('error', process.stderr.write);
     buildProcess.on('close', function (code) {
       if (code === 0) {
         callback();
       } else {
-        throw new Error(`Generate SSR content failed with code ${code}`);
+        console.error(`Generate SSR content failed with code ${code}`);
       }
     });
   }
   replaceTemplateFile(compiler: Compiler) {
-    const token = this.options.token;
+    const id = this.options.id;
     const context = compiler.context;
     const templateContent = this.templateContent;
     const ssrFilePath = path.resolve(context, './dist/ssr/ssr.bundle.js');
@@ -65,7 +63,10 @@ class RspackSSRPlugin implements RspackPluginInstance {
     const getSSRContent = require(ssrFilePath).default;
     delete require.cache[require.resolve(ssrFilePath)];
     const ssrContent = getSSRContent();
-    const newTemplateContent = templateContent.replace(token, ssrContent);
+    const newTemplateContent = templateContent.replace(
+      new RegExp(`<div id="${id}"><\\/div>`),
+      `<div id="${id}">${ssrContent}</div>`,
+    );
     writeFileSync(
       path.resolve(context, './html/index.html'),
       newTemplateContent,
@@ -76,8 +77,12 @@ class RspackSSRPlugin implements RspackPluginInstance {
   }
   recoverTemplateFile(compiler: Compiler) {
     const context = compiler.context;
-    const templateContent = this.templateContent;
-    writeFileSync(path.resolve(context, './html/index.html'), templateContent, {
+    const { id, template } = this.options;
+    const templateContent = this.templateContent.replace(
+      new RegExp(`<div id="${id}"><\\/div>`),
+      `<div id="${id}"></div>`,
+    );
+    writeFileSync(path.resolve(context, template), templateContent, {
       encoding: 'utf-8',
     });
   }
