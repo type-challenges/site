@@ -34,17 +34,8 @@ export default function createBaseRspackConfig(): Configuration {
       },
       rules: [
         {
-          resourceQuery: /url$/,
-          type: 'asset/resource',
-        },
-        {
           resourceQuery: /raw$/,
           type: 'asset/source',
-        },
-        {
-          test: /\.svg$/,
-          issuer: /\.[jt]sx?$/,
-          use: ['@svgr/webpack'],
         },
         {
           test: /\.less$/i,

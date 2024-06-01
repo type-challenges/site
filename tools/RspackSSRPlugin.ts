@@ -45,14 +45,12 @@ class RspackSSRPlugin implements RspackPluginInstance {
     ]);
     buildProcess.stdout.on('data', process.stdout.write);
     buildProcess.stderr.on('data', process.stderr.write);
-    buildProcess.on('error', function (e) {
-      throw e;
-    });
+    buildProcess.on('error', process.stderr.write);
     buildProcess.on('close', function (code) {
       if (code === 0) {
         callback();
       } else {
-        throw new Error(`Generate SSR content failed with code ${code}`);
+        console.error(`Generate SSR content failed with code ${code}`);
       }
     });
   }
@@ -79,8 +77,12 @@ class RspackSSRPlugin implements RspackPluginInstance {
   }
   recoverTemplateFile(compiler: Compiler) {
     const context = compiler.context;
-    const templateContent = this.templateContent;
-    writeFileSync(path.resolve(context, './html/index.html'), templateContent, {
+    const { id, template } = this.options;
+    const templateContent = this.templateContent.replace(
+      new RegExp(`<div id="${id}"><\\/div>`),
+      `<div id="${id}"></div>`,
+    );
+    writeFileSync(path.resolve(context, template), templateContent, {
       encoding: 'utf-8',
     });
   }

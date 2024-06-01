@@ -22,7 +22,6 @@
     "plugin:react/jsx-runtime",
     "plugin:import/recommended",
     "plugin:compat/recommended",
-    "plugin:prettier/recommended",
     "plugin:eslint-comments/recommended"
   ],
   "parser": "@typescript-eslint/parser",
@@ -79,13 +78,24 @@
         "newlines-between": "ignore"
       }
     ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "quote-props": [
+      "error",
+      "as-needed"
+    ],
     "semi": [
       "error",
       "always"
     ],
-    "quotes": [
+    "semi-spacing": [
       "error",
-      "single"
+      {
+        "before": false,
+        "after": true
+      }
     ],
     "no-trailing-spaces": "error",
     "@typescript-eslint/no-unused-vars": [
@@ -96,20 +106,6 @@
     ],
     "max-len": ["error", { "code": 120, "ignoreComments": true }],
     "object-curly-spacing": ["error", "always"],
-    "prettier/prettier": [
-      "error",
-      {
-        "printWidth": 80,
-        "tabWidth": 2,
-        "useTabs": false,
-        "semi": true,
-        "singleQuote": true,
-        "trailingComma": "all",
-        "bracketSpacing": true,
-        "jsxBracketSameLine": false,
-        "arrowParens": "avoid"
-      }
-    ],
     "react/jsx-indent": ["error", 2],
     "react/jsx-indent-props": ["error", 2],
     "react/jsx-tag-spacing": "error",

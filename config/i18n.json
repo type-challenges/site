@@ -54,5 +54,9 @@
   "confirm_reset_code": {
     "en": "Are you sure to reset code?",
     "zh-CN": "确认重置代码？"
+  },
+  "no_question": {
+    "en": "No Result",
+    "zh-CN": "暂无数据"
   }
 }

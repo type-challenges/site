@@ -62,21 +62,24 @@ class TypeChallenges {
       `${TypeChallenges.FETCH_PREFIX}/${this.id}/${fileName}`,
     ).then(res => res.text());
   }
-  async getReadme(options: { language?: 'zh-CN' | 'en' } = {}) {
+  async getReadme(options: { language?: 'zh-CN' | 'en' } = {}): Promise<string> {
     const { language = 'en' } = options;
     if (this.readme[language]) {
       return this.readme[language]!;
     }
     const fileName = `README${language === 'en' ? '' : `.${language}`}.md`;
     const readmeSource = await this.getFile(fileName);
-    const links =
+    if (language !== 'en' && readmeSource.includes('Couldn\'t find the requested file')) {
+      return await this.getReadme();
+    }
+    let readme = readmeSource;
+    const questionLinks =
       readmeSource.match(
         new RegExp(
           `https:\\/\\/github\\.com\\/type-challenges\\/type-challenges\\/blob\\/main\\/questions\\/.*\\/${fileName}`,
         ),
       ) || [];
-    let readme = readmeSource;
-    for (const link of links) {
+    for (const link of questionLinks) {
       const question = link.match(/(?<=\/)[0-9]+-([a-zA-Z0-9-])+(?=\/)/g)?.[0];
       if (!question) {
         continue;
@@ -85,7 +88,20 @@ class TypeChallenges {
       url.searchParams.set('question', question);
       readme = readme.replace(link, url.toString());
     }
-    readme = readme.replace('../../README.md', '/');
+    const readmeLinks = readmeSource.match(
+      /(?<=<a.*)href="\.\/README\.[a-zA-Z-]+\.md"(?=(\s|>))/g,
+    ) || [];
+    for (const link of readmeLinks) {
+      const name = link.match(/(?<=href="\.\/)README\.[a-zA-Z-]+\.md(?=")/)?.[0];
+      readme = readme.replace(
+        link,
+        `<a href="https://github.com/type-challenges/type-challenges/tree/main/questions/${this.id}/${name}"`
+      );
+    }
+    readme = readme.replace(
+      `../../${fileName}`,
+      `https://github.com/type-challenges/type-challenges/tree/main/${fileName}`
+    );
     this.readme[language] = readme;
     return this.readme[language]!;
   }
@@ -115,27 +131,33 @@ class TypeChallenges {
     }
     return this.info || {};
   }
-  async getSolution() {
+  async getSolution(cnt: number = 0): Promise<string> {
     if (this.solution) {
       return this.solution;
     }
+    if (cnt === 3) {
+      return 'Get solution failed!';
+    }
+    cnt += 1;
     const id = this.id;
     const index = id.match(/[0-9]+(?=-)/)?.[0];
     if (!index) {
       return 'Get solution failed!';
     }
     const res = await fetch(
-      'https://api.github.com/repos/type-challenges/type-challenges/issues?&sort=comments&per_page=1&labels=answer,' +
+      // eslint-disable-next-line max-len
+      'https://api.github.com/repos/type-challenges/type-challenges/issues?&sort=reactions-+1-desc&per_page=1&labels=answer,' +
         String(Number(index)),
     );
-    const solutions = await res.json();
-    const solution = solutions?.[0];
-    if (!solution) {
-      return 'Get solution failed!';
+    try {
+      const solutions = await res.json();
+      const solution = solutions?.[0];
+      const { body, html_url } = solution;
+      this.solution = `<a href='${html_url}' target='_blank'>${html_url}</a>\n${body}`;
+      return this.solution;
+    } catch {
+      return await this.getSolution(cnt);
     }
-    const { body, html_url } = solution;
-    this.solution = `<a href='${html_url}' target='_blank'>${html_url}</a>\n${body}`;
-    return this.solution;
   }
 }
 
@@ -174,7 +196,7 @@ export async function getQuestionRaw(question: string): Promise<QuestionRaw> {
   const { lastUpdated } = cache[question] || {};
   return deepmerge(DEFAULT_RAW, {
     [QuestionFiles.check]: {
-      content: testCases.replace(/@ts-expect-error\n/, ''),
+      content: testCases.replace(/(\/\/).*@ts-expect-error\s+/g, ''),
     },
     [QuestionFiles.template]: { content: lastUpdated ?? template },
   });

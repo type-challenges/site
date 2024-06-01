@@ -3,12 +3,7 @@
   height: 100%;
   :global {
     .arco-tabs-content {
-      width: 100%;
       height: calc(100% - 36px);
-      div {
-        height: 100%;
-        box-sizing: border-box;
-      }
     }
   }
   .desc-container, .solution-container {
@@ -18,9 +13,6 @@
   }
   .desc-container {
     position: relative;
-    div {
-      height: auto;
-    }
     .desc-container-inner {
       width: 100%;
       height: calc(100% - 32px);
@@ -28,20 +20,6 @@
       box-sizing: border-box;
       overflow-y: auto;
       overflow-x: hidden;
-      .desc-header {
-        width: 100%;
-        display: flex;
-        align-items: flex-end;
-        margin-bottom: 16px;
-        .desc-title {
-          width: 100%;
-          font-size: 24px;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-      }
       .desc-skeleton {
         width: 100%;
         padding: 16px 0;
@@ -50,23 +28,6 @@
       .desc-content {
         margin-bottom: 16px;
         font-size: 16px;
-      }
-      .desc-cases {
-        width: 100%;
-        .desc-case {
-          width: 100%;
-          &:not(:last-child) {
-            margin-bottom: 16px;
-          }
-          .desc-case-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 8px;
-          }
-          .desc-case-content {
-            font-family: Menlo, sans-serif;
-          }
-        }
       }
     }
     .desc-footer {
@@ -85,14 +46,7 @@
   }
   .solution-container {
     padding: 0 20px;
-    box-sizing: border-box;
     font-size: 16px;
     overflow: auto;
-    > pre {
-      margin: 0;
-      > div {
-        margin: 0 !important;
-      }
-    }
   }
 }

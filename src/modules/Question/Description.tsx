@@ -36,6 +36,7 @@ const Description = function () {
 
   useEffect(
     function () {
+      setInfo({});
       setLoading(true);
       updateData(currentQuestion, language);
     },
@@ -56,18 +57,16 @@ const Description = function () {
           </div>
         </Skeleton>
       </div>
-      {author?.name && (
-        <div className={styles['desc-footer']}>
-          <a
-            href={author.github}
-            target={'_blank'}
-            rel="noreferrer"
-            className={styles['desc-contributor']}
-          >
-            Provided By @{author.name}
-          </a>
-        </div>
-      )}
+      <div className={styles['desc-footer']}>
+        <a
+          href={author?.github ? `https://github.com/${author.github}` : undefined}
+          target={'_blank'}
+          rel="noreferrer"
+          className={styles['desc-contributor']}
+        >
+          Provided By {author?.name || author?.github ? `@${author.name || author?.github}` : '--'}
+        </a>
+      </div>
     </div>
   );
 };
