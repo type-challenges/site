@@ -49,8 +49,6 @@ Please follow the commit specification. See [`.commitlintrc.json`](https://githu
 ### Commonly used NPM scripts
 
 ```bash
-# add new problem
-$ yarn new
 # run project in development mode
 $ yarn dev
 # build all dist files
@@ -64,7 +62,7 @@ There are some other scripts available in the `scripts` section of the `package.
 - **`assets`**: contains static files of the site
 - **`config`**: contains configuration files
 - **`src`**: contains the source code
-- **`problems`**: contains all the problems
+- **`tools`**: contains the built-in config and plugin files
 
 All our source files are written in typescript, please make sure your submissions have strict type deduction and follow eslint specifications.
 
