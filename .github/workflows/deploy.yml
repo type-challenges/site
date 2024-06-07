@@ -36,7 +36,7 @@ jobs:
           folder: dist
           branch: gh-pages
           token: ${{ secrets.DEPLOY_TOKEN }}
-          repository-name: typescript-tutorial-exercises/preview
+          repository-name: type-challenges/site
       - name: Deploy to github pages
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: JamesIves/github-pages-deploy-action@v4
@@ -44,4 +44,4 @@ jobs:
           folder: dist
           branch: gh-pages
           token: ${{ secrets.DEPLOY_TOKEN }}
-          repository-name: typescript-tutorial-exercises/typescript-tutorial-exercises.github.io
+          repository-name: type-challenges/type-challenges.github.io

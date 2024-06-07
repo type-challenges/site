@@ -1,8 +1,8 @@
-# Typescript-Tutorial-Exercises Contributing Guide
+# Type-Challenges-Site Contributing Guide
 
 Hi! I'm really excited that you are interested in contributing to js-sdsl. Before submitting your contribution, please make sure to take a moment and read through the following guidelines:
 
-- [Code of Conduct](https://github.com/typescript-tutorial-exercises/core/blob/main/CODE_OF_CONDUCT.md)
+- [Code of Conduct](https://github.com/type-challenges/site/blob/main/CODE_OF_CONDUCT.md)
 - [Issue Reporting Guidelines](#issue-reporting-guidelines)
 - [Pull Request Guidelines](#pull-request-guidelines)
 - [Development Setup](#development-setup)
@@ -44,7 +44,7 @@ $ yarn setup
 
 ### Committing Changes
 
-Please follow the commit specification. See [`.commitlintrc.json`](https://github.com/typescript-tutorial-exercises/core/blob/main/.commitlintrc.json) get help.
+Please follow the commit specification. See [`.commitlintrc.json`](https://github.com/type-challenges/site/blob/main/.commitlintrc.json) get help.
 
 ### Commonly used NPM scripts
 
@@ -68,6 +68,6 @@ All our source files are written in typescript, please make sure your submission
 
 ## Credits
 
-Thank you to all the people who have already contributed to `typescript-tutorial-exercises`!
+Thank you to all the people who have already contributed to `type-challenges`!
 
-[![contributors](https://contrib.rocks/image?repo=typescript-tutorial-exercises/core)](https://github.com/typescript-tutorial-exercises/core/graphs/contributors)
+[![contributors](https://contrib.rocks/image?repo=type-challenges/site)](https://github.com/type-challenges/site/graphs/contributors)

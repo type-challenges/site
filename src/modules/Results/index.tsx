@@ -1,12 +1,14 @@
 import type { editor } from 'monaco-editor';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Skeleton } from '@arco-design/web-react';
+import { Button, Skeleton } from '@arco-design/web-react';
 import localCache, { QUESTION_STATUS } from '@src/utils/local-cache';
 import emitter from '@src/utils/emit';
 import Context from '@src/utils/context';
 import { monacoEditorLoaded, monacoInstance } from '@src/utils/monaco';
 import { QuestionFiles } from '@src/utils/type-challenges';
 import SubmitStatus from '@src/components/SubmitStatus';
+import i18n from '@config/i18n.json';
+import { Setting } from '@src/utils/setting';
 import styles from './index.module.less';
 
 function formatErrorFromMarkers(markers: editor.IMarker[]) {
@@ -17,12 +19,12 @@ function formatErrorFromMarkers(markers: editor.IMarker[]) {
   });
 }
 
-function createResultError(status: string[]) {
+function createResultError(status: string[], language: Setting['language']) {
   return (
     <div className={styles['result-errors']}>
       <div className={styles['result-error-title']}>
         <SubmitStatus status={QUESTION_STATUS.unAccepted} />
-        <span style={{ marginLeft: 8 }}>Compilation Error</span>
+        <span style={{ marginLeft: 8 }}>{i18n['compilation_error'][language]}</span>
       </div>
       <div className={styles['result-error-info']}>
         {status.map(function (error) {
@@ -38,9 +40,14 @@ function createResultError(status: string[]) {
 }
 
 const Results = function () {
-  const [{ currentQuestion }] = useContext(Context);
+  const [{ currentQuestion, setting: { language } }] = useContext(Context);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<string[]>([]);
+
+  const shareSolutionHref = useMemo(function () {
+    const questionNum = currentQuestion.match(/[0-9]+(?=-)/)?.[0];
+    return `https://tsch.js.org/${Number(questionNum)}/answer/${language === 'en' ? '' : language}`;
+  }, [currentQuestion, language]);
 
   const resultContent = useMemo(
     function () {
@@ -49,18 +56,29 @@ const Results = function () {
           <div className={styles['result-accept']}>
             <div className={styles['result-accept-title']}>
               <SubmitStatus status={QUESTION_STATUS.accepted} />
-              <span style={{ marginLeft: 8 }}>Compilation Successful</span>
+              <span style={{ marginLeft: 8 }}>{i18n['compilation_success'][language]}</span>
             </div>
             <div className={styles['result-accept-info']}>
-              🎉 Yay! You have finished this challenge.
+              {i18n['compilation_success_info'][language]}
+            </div>
+            <div className={styles['result-accept-btns']}>
+              <Button
+                type={'primary'}
+                status={'success'}
+                target={'_blank'}
+                href={shareSolutionHref}
+                style={{ borderRadius: 4 }}
+              >
+                {i18n['share_solution'][language]}
+              </Button>
             </div>
           </div>
         );
       } else {
-        return createResultError(status);
+        return createResultError(status, language);
       }
     },
-    [status],
+    [status, language],
   );
 
   const validate = useCallback(

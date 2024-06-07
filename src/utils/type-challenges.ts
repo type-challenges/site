@@ -131,24 +131,31 @@ class TypeChallenges {
     }
     return this.info || {};
   }
-  async getSolution(cnt: number = 0): Promise<string> {
+  async getSolution(cnt: number = 3): Promise<string> {
     if (this.solution) {
       return this.solution;
     }
-    if (cnt === 3) {
+    if (cnt === 0) {
       return 'Get solution failed!';
     }
-    cnt += 1;
     const id = this.id;
     const index = id.match(/[0-9]+(?=-)/)?.[0];
     if (!index) {
       return 'Get solution failed!';
     }
+    const controller = new AbortController();
     const res = await fetch(
       // eslint-disable-next-line max-len
       'https://api.github.com/repos/type-challenges/type-challenges/issues?&sort=reactions-+1-desc&per_page=1&labels=answer,' +
-        String(Number(index)),
+        String(Number(index)),{
+        headers: {
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        },
+        signal: controller.signal,
+      }
     );
+    setTimeout(() => controller.abort(), 5000);
     try {
       const solutions = await res.json();
       const solution = solutions?.[0];
@@ -156,7 +163,7 @@ class TypeChallenges {
       this.solution = `<a href='${html_url}' target='_blank'>${html_url}</a>\n${body}`;
       return this.solution;
     } catch {
-      return await this.getSolution(cnt);
+      return await this.getSolution(cnt - 1);
     }
   }
 }
