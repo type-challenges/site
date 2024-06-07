@@ -6,7 +6,7 @@ const Footer = function () {
   return (
     <div className={styles.container}>
       <a href={linkJson['github-repo']} target={'_blank'} rel="noreferrer">
-        copyright © 2023-{dayjs().year()} typescript-tutorial-exercises
+        copyright © 2023-{dayjs().year()} Type Challenges
       </a>
     </div>
   );

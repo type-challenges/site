@@ -1,9 +1,9 @@
 # Typescript Tutorial Exercise
 
-[![status](https://img.shields.io/github/actions/workflow/status/typescript-tutorial-exercises/core/deploy.yml)](https://github.com/typescript-tutorial-exercises/core/actions/workflows/deploy.yml)
-[![stars](https://img.shields.io/github/stars/typescript-tutorial-exercises/core.svg)](https://github.com/typescript-tutorial-exercises/core)
+[![status](https://img.shields.io/github/actions/workflow/status/type-challenges/site/deploy.yml)](https://github.com/type-challenges/site/actions/workflows/deploy.yml)
+[![stars](https://img.shields.io/github/stars/type-challenges/site.svg)](https://github.com/type-challenges/site)
 [![licenses](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![language](https://img.shields.io/github/languages/top/typescript-tutorial-exercises/core.svg)](https://github.com/typescript-tutorial-exercises/core)
+[![language](https://img.shields.io/github/languages/top/type-challenges/site.svg)](https://github.com/type-challenges/site)
 
 ## Getting Started
 
@@ -19,7 +19,7 @@ Feel free to dive in! Open an issue or submit PRs. It may be helpful to read the
 
 Thanks goes to these wonderful people:
 
-[![contributors](https://contrib.rocks/image?repo=typescript-tutorial-exercises/core)](https://github.com/typescript-tutorial-exercises/core/graphs/contributors)
+[![contributors](https://contrib.rocks/image?repo=type-challenges/site)](https://github.com/type-challenges/site/graphs/contributors)
 
 
 ## License
