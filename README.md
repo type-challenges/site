@@ -7,7 +7,7 @@
 
 ## Getting Started
 
-Please go to [typescript-tutorial-exercises.github.io](https://typescript-tutorial-exercises.github.io/) to start your TypeScript travel!
+Please go to [type-challenges.github.io](https://type-challenges.github.io/) to start your TypeScript travel!
 
 All exercises are from [type-challenges](https://github.com/type-challenges/type-challenges).
 
