@@ -58,5 +58,21 @@
   "no_question": {
     "en": "No Result",
     "zh-CN": "暂无数据"
+  },
+  "compilation_error": {
+    "en": "Compilation Error",
+    "zh-CN": "编译失败"
+  },
+  "compilation_success": {
+    "en": "Compilation Successful",
+    "zh-CN": "编译成功"
+  },
+  "compilation_success_info": {
+    "en": "\uD83C\uDF89 Yay! You have finished this challenge.",
+    "zh-CN": "\uD83C\uDF89 恭喜你完成了这个挑战！"
+  },
+  "share_solution": {
+    "en": "Share your Solution",
+    "zh-CN": "分享你的解答"
   }
 }

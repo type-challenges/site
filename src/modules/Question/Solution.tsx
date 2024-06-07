@@ -28,7 +28,7 @@ const Solution = function () {
 
   return (
     <div className={styles['solution-container']}>
-      <Skeleton loading={loading} style={{ marginTop: 20 }}>
+      <Skeleton loading={loading} style={{ marginTop: 20 }} animation={true}>
         <Markdown content={solution} theme={theme} />
       </Skeleton>
     </div>
